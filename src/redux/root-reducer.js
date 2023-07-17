@@ -1,10 +1,11 @@
 import { combineReducers } from "redux";
-import userReducer from "./user/user.reducer";
-import playbacksReducer from "./playbacks/playbacks.reducers"
+import playbacksReducer from "./playbacks/playbacks.reducers";
+import songsReducer from "./songs/songs.reducer";
 
 const rootReducer = combineReducers({
+    playbacks: playbacksReducer, 
     user: userReducer, 
-    playbacks : playbacksReducer
+    songs: songsReducer,
 });
 
 export default rootReducer;
