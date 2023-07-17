@@ -3,6 +3,10 @@ import "./App.css";
 // import { useDispatch, useSelector } from "react-redux";
 // import { useEffect } from "react";
 // import { Button } from "react-bootstrap";
+import './App.css';
+import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
+import Home from "../pages";
+import TopNavbar from "../components/layout/TopNavbar";
 
 function App() {
   /**
@@ -27,6 +31,12 @@ function App() {
       {/* <Button onClick={fetchCurrentPlayingSong}>fetchCurrentPlayingSong</Button>
       {item ? <h1>{item.name}</h1> : <h1>Loading</h1>} */}
     </div>
+    <Router>
+        <TopNavbar/>
+            <Routes>
+                <Route path="/" element={<Home/>}></Route>
+            </Routes>
+    </Router>
   );
 }
 
