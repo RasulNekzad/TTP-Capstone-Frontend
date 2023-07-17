@@ -24,7 +24,7 @@ function TopNavbar() {
 
     return (
         <Navbar expand="lg" className="bg-body-tertiary">
-                <Navbar.Brand href="#brand" className={`${navCollapse ? 'brand' : 'brand-padding'}`}>Spotify Proximity</Navbar.Brand>
+                <Navbar.Brand href="/" className={`${navCollapse ? 'brand' : 'brand-padding'}`}>Spotify Proximity</Navbar.Brand>
                 <Navbar.Toggle id="basic-navbar-toggle" aria-controls="basic-navbar-nav"/>
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
