@@ -36,3 +36,22 @@ export const fetchPlaybackThunk = (songId, userId) => {
     }
   };
 };
+
+export const createPlayback = (payload) => ({
+  type: PlaybacksActionType.CREATE_PLAYBACK,
+  payload,
+});
+
+export const createPlaybackThunk = (newPlayback) => {
+  return async (dispatch) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:8080/api/playback/`,
+        newPlayback
+      );
+      dispatch(createPlayback(response.data));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+};
