@@ -4,6 +4,7 @@
 // import { Button } from "react-bootstrap";
 import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import Home from "../pages";
+import Auth from "../pages/auth";
 import TopNavbar from "../components/layout/TopNavbar";
 
 function App() {
@@ -32,7 +33,8 @@ function App() {
     <Router>
         <TopNavbar/>
             <Routes>
-                <Route path="/" element={<Home/>}></Route>
+                <Route path="/" element={<Home/>} />
+                <Route path="/login" element={<Auth/>}/>
             </Routes>
     </Router>
   );
