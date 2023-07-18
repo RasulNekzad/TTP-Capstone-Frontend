@@ -4,6 +4,7 @@
 // import { Button } from "react-bootstrap";
 import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import Home from "../pages";
+import Auth from "../pages/auth";
 import TopNavbar from "../components/layout/TopNavbar";
 import User from "../pages/user"
 import PlaybacksNearby from "../pages/playbacksNearby";
@@ -34,11 +35,13 @@ function App() {
     // </div>
     <Router>
         <TopNavbar/>
-        <Routes>
-            <Route path="/" element={<Home/>} />
-            <Route path="/user/:id" element={<User />} />
-            <Route path="/playbacks" element={<PlaybacksNearby />} />
-        </Routes>
+            <Routes>
+                <Route path="/" element={<Home/>} />
+                <Route path="/login" element={<Auth/>}/>
+                <Route path="/" element={<Home/>} />
+                <Route path="/user/:id" element={<User />} />
+                <Route path="/playbacks" element={<PlaybacksNearby />} />
+            </Routes>
     </Router>
   );
 }

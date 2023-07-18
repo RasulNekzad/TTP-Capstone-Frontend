@@ -1,4 +1,5 @@
 .bg-body-tertiary {
+    min-height: 7vh;
     padding-bottom: .5rem !important;
 }
 

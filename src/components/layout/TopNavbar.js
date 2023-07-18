@@ -32,8 +32,7 @@ function TopNavbar() {
                         <Link to="/history" className={`${navCollapse ? 'row-padding' : ''} link-dec`}>History</Link>
                     </Nav>
                     <Nav className={`${navCollapse ? '' : 'nav-padding'}`}>
-                        <Link to="/login" className={`${navCollapse ? 'row-padding' : 'link-padding'} link-dec`}>Login</Link>
-                        <Link to="/signup" className={`${navCollapse ? 'row-padding' : 'link-signup'} link-dec`}>Sign Up</Link>
+                        <Link to="/login" className={`${navCollapse ? 'row-padding' : 'link-signup'} link-dec`}>Login / Register</Link>
                     </Nav>
                 </Navbar.Collapse>
         </Navbar>
