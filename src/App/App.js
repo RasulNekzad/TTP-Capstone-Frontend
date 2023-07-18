@@ -40,7 +40,7 @@ function App() {
                 <Route path="/login" element={<Auth/>}/>
                 <Route path="/" element={<Home/>} />
                 <Route path="/user/:id" element={<User />} />
-                <Route path="/playbacks" element={<PlaybacksNearby />} />
+                <Route path="/songs" element={<PlaybacksNearby />} />
             </Routes>
     </Router>
   );
