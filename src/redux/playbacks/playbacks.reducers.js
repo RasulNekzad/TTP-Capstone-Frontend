@@ -13,9 +13,12 @@ const playbacksReducer = (state = INITIAL_PLAYBACKS_STATE, action) => {
     case PlaybacksActionType.FETCH_PLAYBACK:
       return { ...state, playback: action.payload };
 
+    case PlaybacksActionType.CREATE_PLAYBACK:
+      return { ...state, playbacks: [...state.playbacks, action.payload] };
+
     default:
       return state;
   }
 };
 
-export default playbacksReducer
+export default playbacksReducer;
