@@ -1,9 +1,8 @@
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import "./App.css";
 // import { fetchCurrentPlayingSongThunk } from "../redux/songs/songs.actions";
 // import { useDispatch, useSelector } from "react-redux";
 // import { useEffect } from "react";
 // import { Button } from "react-bootstrap";
+import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import Home from "../pages";
 import TopNavbar from "../components/layout/TopNavbar";
 import User from "../pages/user"
@@ -29,10 +28,10 @@ function App() {
   // }, [item]);
 
   return (
-    <div className="App">
-      {/* <Button onClick={fetchCurrentPlayingSong}>fetchCurrentPlayingSong</Button>
-      {item ? <h1>{item.name}</h1> : <h1>Loading</h1>} */}
-    </div>
+    // <div className="App">
+    //   {/* <Button onClick={fetchCurrentPlayingSong}>fetchCurrentPlayingSong</Button>
+    //   {item ? <h1>{item.name}</h1> : <h1>Loading</h1>} */}
+    // </div>
     <Router>
         <TopNavbar/>
         <Routes>
