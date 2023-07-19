@@ -7,16 +7,19 @@ import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 //Redux
-import { Provider } from "react-redux";
+import {Provider} from "react-redux";
 import store from "./redux/store";
+import {AuthContextProvider} from "./context/AuthProviderContext";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <Provider store={store}>
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
-  </Provider>
+    <Provider store={store}>
+        <AuthContextProvider>
+            <React.StrictMode>
+                <App/>
+            </React.StrictMode>
+        </AuthContextProvider>
+    </Provider>
 );
 
 // If you want to start measuring performance in your app, pass a function
