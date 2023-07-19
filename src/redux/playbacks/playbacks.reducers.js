@@ -3,6 +3,7 @@ import PlaybacksActionType from "./playbacks.types";
 export const INITIAL_PLAYBACKS_STATE = {
   playbacks: [],
   playback: {},
+  personalPlaybacks: [],
 };
 
 const playbacksReducer = (state = INITIAL_PLAYBACKS_STATE, action) => {
@@ -15,6 +16,9 @@ const playbacksReducer = (state = INITIAL_PLAYBACKS_STATE, action) => {
 
     case PlaybacksActionType.CREATE_PLAYBACK:
       return { ...state, playbacks: [...state.playbacks, action.payload] };
+
+    case PlaybacksActionType.FETCH_PERSONAL_PLAYBACKS:
+      return { ...state, personalPlaybacks: action.payload };
 
     default:
       return state;

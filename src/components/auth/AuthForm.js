@@ -1,5 +1,5 @@
 import './AuthForm.css';
-import {useRef, useState} from "react";
+import {useContext, useRef, useState} from "react";
 import {
     setPersistence,
     signInWithEmailAndPassword,
@@ -13,10 +13,14 @@ import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import {useNavigate} from "react-router-dom";
 import googleLogo from '../../assets/google.png'
 import {Alert} from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchSpotifyOAuthThunk } from "../../redux/user/user.actions";
+import AuthContext from "../../context/AuthProviderContext";
 
-const AuthForm = (props) => {
+const AuthForm = ({ spotifyOAuth , onSpotifyAuthClick }) => {
     const provider = new GoogleAuthProvider();
     const navigate = useNavigate();
+    const {login} = useContext(AuthContext);
 
     const [authType, setAuthType] = useState(true);
     const [error, setError] = useState('');
@@ -38,8 +42,7 @@ const AuthForm = (props) => {
             createUserWithEmailAndPassword(auth, emailInputRef.current.value, passwordInputRef.current.value).then((userCredential) => {
                 onAuthStateChanged(auth, (user) => {
                     const uid = user.uid;
-                    // ADD THUNK HERE
-
+                    login(uid);
                 })
                 navigate('/');
             }).catch((error) => {
@@ -52,8 +55,7 @@ const AuthForm = (props) => {
                     return signInWithEmailAndPassword(auth, emailInputRef.current.value, passwordInputRef.current.value);
                 }).then((userCredential) => {
                 const user = userCredential.user;
-                // ADD THUNK HERE
-
+                login(user.uid);
                 navigate('/');
             }).catch((error) => {
                 const errorCode = error.code;
@@ -84,7 +86,9 @@ const AuthForm = (props) => {
             // ...
         });
     }
-
+    const spotifyAuthHandler = () => {
+        onSpotifyAuthClick(); // Trigger the callback when the Spotify button is clicked
+    }
     return (
         <div className="auth">
             <div className="auth-container">
@@ -113,6 +117,10 @@ const AuthForm = (props) => {
                     <button type="button" onClick={googleAuthHandler} className="button">
                         <img className="button__logo" src={googleLogo} alt="google icon"/>
                         <span className="button__text">Continue With Google</span>
+                    </button>
+                    <button type="button" onClick={spotifyAuthHandler} className="button">
+                        {/* <img className="button__logo" src={googleLogo} alt="google icon"/> */}
+                        <span className="button__text">Continue With Spotify</span>
                     </button>
                 </form>
             </div>
