@@ -49,8 +49,9 @@ export const fetchCurrentPlayingSongThunk = (accessToken) => {
   };
 };
 
-export const addSong = () => ({
+export const addSong = (payload) => ({
   type: SongsActionType.ADD_SONG,
+  payload,
 });
 
 /**
@@ -61,11 +62,11 @@ export const addSong = () => ({
     "external_url": "externalurl"
     }
  */
-export const addSongThunk = (song_id, song) => {
+export const addSongThunk = (song) => {
   return async (dispatch) => {
     try {
       const response = await axios.post(
-        `http://localhost:8080/api/song/${song_id}`,
+        `http://localhost:8080/api/song/`,
         song
       );
       console.log("API CALL ADD SONG =>", response.data);

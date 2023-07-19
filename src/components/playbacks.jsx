@@ -1,15 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
-import process from 'process';
 
 const Playbacks = ({ playbacks }) => {
+  const [currentLatitude, setCurrentLatitude] = useState(0);
+  const [currentLongitude, setCurrentLongitude] = useState(0);
   const [map, setMap] = useState(null);
   const [markers, setMarkers] = useState([]);
 
-  // Define the map options
+  const success = (position) => {
+    const { latitude, longitude } = position.coords;
+    setCurrentLatitude(parseFloat(latitude));
+    setCurrentLongitude(parseFloat(longitude));
+  };
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(success);
+  }, []);
+
   const mapOptions = {
     zoom: 10,
-    center: { lat: 2, lng: 3 }, // Set the initial center of the map
+    center: { lat: currentLatitude, lng: currentLongitude },
   };
 
   const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
@@ -17,11 +27,18 @@ const Playbacks = ({ playbacks }) => {
   useEffect(() => {
     if (map && playbacks) {
       const newMarkers = playbacks.map((playback) => {
+        const { latitude, longitude } = playback;
+        const { image_url } = playback;
         return {
           position: {
-            lat: parseFloat(playback.latitude),
-            lng: parseFloat(playback.longitude),
+            lat: parseFloat(latitude),
+            lng: parseFloat(longitude),
           },
+          icon: {
+            url: image_url, // Use the song image as the marker icon
+            scaledSize: new window.google.maps.Size(30, 30), // Adjust the size of the icon
+          },
+          text: `(${latitude}, ${longitude})` 
         };
       });
       setMarkers(newMarkers);
@@ -40,14 +57,14 @@ const Playbacks = ({ playbacks }) => {
           options={mapOptions}
           onLoad={onLoad}
         >
-          {
-            markers.map((marker, index) => (
-              <Marker
-                key={index}
-                position={marker.position}
-              />
-            ))
-          }
+          {markers.map((marker, index) => (
+            <Marker
+              key={index}
+              position={marker.position}
+              icon={marker.icon}
+              label={marker.text}
+            />
+          ))}
         </GoogleMap>
       </LoadScript>
     </div>
