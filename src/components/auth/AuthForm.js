@@ -13,8 +13,10 @@ import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import {useNavigate} from "react-router-dom";
 import googleLogo from '../../assets/google.png'
 import {Alert} from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchSpotifyOAuthThunk } from "../../redux/user/user.actions";
 
-const AuthForm = (props) => {
+const AuthForm = ({ spotifyOAuth , onSpotifyAuthClick }) => {
     const provider = new GoogleAuthProvider();
     const navigate = useNavigate();
 
@@ -84,7 +86,9 @@ const AuthForm = (props) => {
             // ...
         });
     }
-
+    const spotifyAuthHandler = () => {
+        onSpotifyAuthClick(); // Trigger the callback when the Spotify button is clicked
+    }
     return (
         <div className="auth">
             <div className="auth-container">
@@ -113,6 +117,10 @@ const AuthForm = (props) => {
                     <button type="button" onClick={googleAuthHandler} className="button">
                         <img className="button__logo" src={googleLogo} alt="google icon"/>
                         <span className="button__text">Continue With Google</span>
+                    </button>
+                    <button type="button" onClick={spotifyAuthHandler} className="button">
+                        {/* <img className="button__logo" src={googleLogo} alt="google icon"/> */}
+                        <span className="button__text">Continue With Spotify</span>
                     </button>
                 </form>
             </div>
