@@ -1,5 +1,5 @@
 import './AuthForm.css';
-import {useRef, useState} from "react";
+import {useContext, useRef, useState} from "react";
 import {
     setPersistence,
     signInWithEmailAndPassword,
@@ -15,10 +15,12 @@ import googleLogo from '../../assets/google.png'
 import {Alert} from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchSpotifyOAuthThunk } from "../../redux/user/user.actions";
+import AuthContext from "../../context/AuthProviderContext";
 
 const AuthForm = ({ spotifyOAuth , onSpotifyAuthClick }) => {
     const provider = new GoogleAuthProvider();
     const navigate = useNavigate();
+    const {login} = useContext(AuthContext);
 
     const [authType, setAuthType] = useState(true);
     const [error, setError] = useState('');
@@ -40,8 +42,7 @@ const AuthForm = ({ spotifyOAuth , onSpotifyAuthClick }) => {
             createUserWithEmailAndPassword(auth, emailInputRef.current.value, passwordInputRef.current.value).then((userCredential) => {
                 onAuthStateChanged(auth, (user) => {
                     const uid = user.uid;
-                    // ADD THUNK HERE
-
+                    login(uid);
                 })
                 navigate('/');
             }).catch((error) => {
@@ -54,8 +55,7 @@ const AuthForm = ({ spotifyOAuth , onSpotifyAuthClick }) => {
                     return signInWithEmailAndPassword(auth, emailInputRef.current.value, passwordInputRef.current.value);
                 }).then((userCredential) => {
                 const user = userCredential.user;
-                // ADD THUNK HERE
-
+                login(user.uid);
                 navigate('/');
             }).catch((error) => {
                 const errorCode = error.code;
