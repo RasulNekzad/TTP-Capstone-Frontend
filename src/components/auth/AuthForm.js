@@ -1,5 +1,5 @@
 import './AuthForm.css';
-import {useRef, useState} from "react";
+import {useContext, useRef, useState} from "react";
 import {
     setPersistence,
     signInWithEmailAndPassword,
@@ -13,10 +13,12 @@ import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import {useNavigate} from "react-router-dom";
 import googleLogo from '../../assets/google.png'
 import {Alert} from "react-bootstrap";
+import AuthContext from "../../context/AuthProviderContext";
 
 const AuthForm = (props) => {
     const provider = new GoogleAuthProvider();
     const navigate = useNavigate();
+    const {login} = useContext(AuthContext);
 
     const [authType, setAuthType] = useState(true);
     const [error, setError] = useState('');
@@ -38,8 +40,7 @@ const AuthForm = (props) => {
             createUserWithEmailAndPassword(auth, emailInputRef.current.value, passwordInputRef.current.value).then((userCredential) => {
                 onAuthStateChanged(auth, (user) => {
                     const uid = user.uid;
-                    // ADD THUNK HERE
-
+                    login(uid);
                 })
                 navigate('/');
             }).catch((error) => {
@@ -52,8 +53,7 @@ const AuthForm = (props) => {
                     return signInWithEmailAndPassword(auth, emailInputRef.current.value, passwordInputRef.current.value);
                 }).then((userCredential) => {
                 const user = userCredential.user;
-                // ADD THUNK HERE
-
+                login(user.uid);
                 navigate('/');
             }).catch((error) => {
                 const errorCode = error.code;
