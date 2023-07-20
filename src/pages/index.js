@@ -2,6 +2,7 @@ import "./index.css";
 import { Button } from "react-bootstrap";
 import React, { useEffect } from "react";
 import img from "../assets/man_listening_headphones.png";
+import { refreshToken } from "../redux/user/user.actions";
 
 function Home() {
   const getParamsFromSpotifyAuth = (hash) => {
@@ -21,9 +22,16 @@ function Home() {
      * Extracting access token and refresh token
      */
     if (window.location.hash) {
-      const {access_token, refresh_token} = getParamsFromSpotifyAuth(window.location.hash);
-      console.log("Token", {access_token, refresh_token});
-      // add to db or firebase 
+      const { access_token, refresh_token } = getParamsFromSpotifyAuth(
+        window.location.hash
+      );
+      console.log("Token", { access_token, refresh_token });
+      // add to db or firebase
+
+      // refresh token test
+      refreshToken(refresh_token).then(({ access_token }) => {
+        console.log("new access_token", access_token);
+      });
     }
   });
 
