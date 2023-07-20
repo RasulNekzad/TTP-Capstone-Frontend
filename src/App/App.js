@@ -12,6 +12,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useEffect } from "react";
 
 function App() {
+  /* Test with mock data.  mockSong should be currently playing from spotify
   const thirySecondsMs = 30000;
   const dispatch = useDispatch();
 
@@ -85,11 +86,12 @@ function App() {
           }
         }
       }
-    }, 3000);
+    }, thirySecondsMs);
     return () => {
       clearInterval(interval);
     };
   }, [songs]);
+  */
 
   /**
    * Commented out tests
