@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import { GoogleMap, LoadScript, Marker, InfoWindow } from '@react-google-maps/api';
+import SpotifyPlayer from "react-spotify-web-playback";
 
 const Playbacks = ({ playbacks }) => {
   const [currentLatitude, setCurrentLatitude] = useState(0);
   const [currentLongitude, setCurrentLongitude] = useState(0);
   const [map, setMap] = useState(null);
   const [markers, setMarkers] = useState([]);
+  const [selectedTrack, setSelectedTrack] = useState(false);
 
   const success = (position) => {
     const { latitude, longitude } = position.coords;
@@ -38,7 +40,7 @@ const Playbacks = ({ playbacks }) => {
             url: image_url, // Use the song image as the marker icon
             scaledSize: new window.google.maps.Size(30, 30), // Adjust the size of the icon
           },
-          text: `(${latitude}, ${longitude})` 
+          text: `(${latitude}, ${longitude})`
         };
       });
       setMarkers(newMarkers);
@@ -47,6 +49,15 @@ const Playbacks = ({ playbacks }) => {
 
   const onLoad = (map) => {
     setMap(map);
+  };
+
+  const handleMarkerClick = () => {
+    // If the selected track is the same as the clicked track, close the InfoWindow
+    setSelectedTrack(true);
+  };
+
+  const handleCloseInfoWindow = () => {
+    setSelectedTrack(false); // Close the InfoWindow by resetting the selectedTrack state
   };
 
   return (
@@ -63,7 +74,16 @@ const Playbacks = ({ playbacks }) => {
               position={marker.position}
               icon={marker.icon}
               label={marker.text}
-            />
+              onClick={handleMarkerClick}
+            >
+              {selectedTrack && (<InfoWindow
+                onCloseClick={handleCloseInfoWindow}
+              >
+                <audio controls>
+                  <source src={"https://p.scdn.co/mp3-preview/7764c953b83f2eb2259e5bd4fcf6559c3ba0d670?cid=0b6fbd37eea445a29e484f2eb8d51b1b"} type="audio/mpeg" />
+                </audio>
+              </InfoWindow>)}
+            </Marker>
           ))}
         </GoogleMap>
       </LoadScript>
