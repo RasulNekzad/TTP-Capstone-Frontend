@@ -1,0 +1,88 @@
+.main {
+    background-color: black;
+    height: 93vh;
+}
+
+.container {
+    height: 93vh;
+
+    padding-top: 2.5rem;
+    padding-left: 5rem !important;
+    padding-right: 5rem !important;
+
+    background-color: white;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.profile {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.profile__pic {
+    height: 10rem;
+    border-radius: 20rem;
+    border: 1px solid black;
+    margin-right: 2rem;
+}
+
+.profile__name {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.spotify__text {
+    margin-bottom: 1rem;
+}
+
+.reset__pw {
+    display: flex;
+    flex-direction: row;
+}
+
+.reset__button {
+    width: 9.5rem;
+    background-color: white;
+    border-bottom: 1px solid black;
+    margin-bottom: 1rem;
+}
+
+.control__input {
+    width: 20rem;
+    height: 2.5rem;
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 0 1rem;
+    margin-bottom: 1rem;
+}
+
+.submit__button {
+    height: 2.5rem;
+    margin-left: 2rem;
+    font-weight: 600;
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.delete__button {
+    border-bottom: 1px solid black;
+}
+
+.delete__button:hover span {
+    font-weight: 500;
+}
+
+.button__text {
+    color: white;
+}
+
+.divider {
+    width: 100%;
+    border-bottom: 1px solid black;
+    margin-bottom: 2rem;
+}

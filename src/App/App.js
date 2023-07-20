@@ -7,6 +7,7 @@ import Home from "../pages";
 import Auth from "../pages/auth";
 import TopNavbar from "../components/layout/TopNavbar";
 import User from "../pages/user";
+import UserProfile from "../components/user/UserProfile";
 import PlaybacksNearby from "../pages/playbacksNearby";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useEffect } from "react";
@@ -116,14 +117,14 @@ function App() {
     //   {item ? <h1>{item.name}</h1> : <h1>Loading</h1>} */}
     // </div>
     <Router>
-      <TopNavbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Auth />} />
-        <Route path="/" element={<Home />} />
-        <Route path="/user/:id" element={<User />} />
-        <Route path="/songs" element={<PlaybacksNearby />} />
-      </Routes>
+        <TopNavbar/>
+            <Routes>
+                <Route path="/" element={<Home/>} />
+                <Route path="/login" element={<Auth/>}/>
+                <Route path="/user" element={<UserProfile />} />
+                <Route path="/user/:id" element={<User />} />
+                <Route path="/songs" element={<PlaybacksNearby />} />
+            </Routes>
     </Router>
   );
 }
