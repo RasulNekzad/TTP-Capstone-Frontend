@@ -3,9 +3,13 @@ import spotifyLogo from "../../assets/spotify.png";
 import {useNavigate} from "react-router-dom";
 import {useRef, useState} from "react";
 import { getAuth, updatePassword, deleteUser } from "firebase/auth";
+import {fetchSpotifyOAuthThunk} from "../../redux/user/user.actions";
+import {useDispatch} from "react-redux";
 
 function UserProfile() {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
     const [showResetPw, setShowResetPw] = useState(false);
     const passwordInputRef = useRef();
 
@@ -19,7 +23,7 @@ function UserProfile() {
     }
 
     const linkSpotifyHandler = () => {
-
+        dispatch(fetchSpotifyOAuthThunk());
     }
 
     const changePasswordHandler = () => {
