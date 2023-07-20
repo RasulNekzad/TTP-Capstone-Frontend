@@ -42,11 +42,18 @@ function TopNavbar() {
                     <Link to="/history" className={`${navCollapse ? 'row-padding' : ''} link-dec`}>History</Link>
                 </Nav>
                 {isLoggedIn ?
-                    <Nav className={`${navCollapse ? '' : 'nav-padding'}`}>
-                        <button className={`${navCollapse ? 'row-padding' : 'link-signup'} link-dec`}
-                                onClick={handleLogout}>Logout
-                        </button>
-                    </Nav>
+                    (<>
+                            <Nav className={`${navCollapse ? '' : 'nav-padding'}`}>
+                                <Link to="/user"
+                                      className={`${navCollapse ? 'row-padding' : ''} link-dec`}>Profile</Link>
+                            </Nav>
+                            <Nav className={`${navCollapse ? '' : 'nav-padding'}`}>
+                                <button className={`${navCollapse ? 'row-padding' : 'link-signup'} link-dec`}
+                                        onClick={handleLogout}>Logout
+                                </button>
+                            </Nav>
+                        </>
+                    )
                     :
                     <Nav className={`${navCollapse ? '' : 'nav-padding'}`}>
                         <Link to="/login" className={`${navCollapse ? 'row-padding' : 'link-signup'} link-dec`}>Login /
