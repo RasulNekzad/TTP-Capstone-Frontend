@@ -11,13 +11,23 @@ const Playbacks = ({ playbacks }) => {
 
   const success = (position) => {
     const { latitude, longitude } = position.coords;
-    setCurrentLatitude(parseFloat(latitude));
-    setCurrentLongitude(parseFloat(longitude));
+
+    // Check if the new latitude or longitude differs from the previous values
+    if (parseFloat(latitude) !== currentLatitude || parseFloat(longitude) !== currentLongitude) {
+      setCurrentLatitude(parseFloat(latitude));
+      setCurrentLongitude(parseFloat(longitude));
+    }
   };
 
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition(success);
-  }, []);
+    // Use watchPosition to continuously track location changes
+    const watchId = navigator.geolocation.watchPosition(success);
+
+    // Clear the watch when the component unmounts
+    return () => {
+      navigator.geolocation.clearWatch(watchId);
+    };
+  }, [currentLatitude, currentLongitude]);
 
   const mapOptions = {
     zoom: 10,
