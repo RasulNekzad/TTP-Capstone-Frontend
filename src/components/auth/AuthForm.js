@@ -103,6 +103,11 @@ const AuthForm = ({ spotifyOAuth , onSpotifyAuthClick }) => {
                 <form onSubmit={submitHandler} className="form">
                     {error && <Alert variant="warning">{error}</Alert>}
                     <p className="form__title">{authType ? 'Login' : 'Register'}</p>
+                    {!authType && (
+                        <div className="control">
+                            <input className="control__input" type="text" id="name" placeholder="Full Name" required/>
+                        </div>
+                    )}
                     <div className="control">
                         <input ref={emailInputRef} className="control__input" type="email" id="email"
                                placeholder="Email"
