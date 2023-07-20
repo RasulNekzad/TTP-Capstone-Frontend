@@ -1,6 +1,22 @@
 import axios from "axios";
 import SongsActionType from "./songs.types";
 
+export const fetchAllSongs = (payload) => ({
+  type: SongsActionType.FETCH_ALL_SONGS,
+  payload,
+});
+
+export const fetchAllSongsThunk = () => {
+  return async (dispatch) => {
+    try {
+      const response = await axios.get(`http://localhost:8080/api/song/`);
+      dispatch(fetchAllSongs(response.data));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+};
+
 export const fetchSong = (payload) => ({
   type: SongsActionType.FETCH_SONG,
   payload,
