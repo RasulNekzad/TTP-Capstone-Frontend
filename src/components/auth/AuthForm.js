@@ -16,6 +16,7 @@ import {Alert} from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchSpotifyOAuthThunk } from "../../redux/user/user.actions";
 import AuthContext from "../../context/AuthProviderContext";
+import axios from "axios";
 
 const AuthForm = ({ spotifyOAuth , onSpotifyAuthClick }) => {
     const provider = new GoogleAuthProvider();
@@ -25,6 +26,7 @@ const AuthForm = ({ spotifyOAuth , onSpotifyAuthClick }) => {
     const [authType, setAuthType] = useState(true);
     const [error, setError] = useState('');
 
+    const nameInputRef = useRef()
     const emailInputRef = useRef();
     const passwordInputRef = useRef();
 
@@ -40,9 +42,14 @@ const AuthForm = ({ spotifyOAuth , onSpotifyAuthClick }) => {
 
         if (!authType) {
             createUserWithEmailAndPassword(auth, emailInputRef.current.value, passwordInputRef.current.value).then((userCredential) => {
-                onAuthStateChanged(auth, (user) => {
+                onAuthStateChanged(auth, async (user) => {
                     const uid = user.uid;
                     login(uid);
+                    await axios.post(`http://localhost:8080/api/user/`, {
+                        userId: uid,
+                        name: nameInputRef.current.value,
+                        email: emailInputRef.current.value
+                    });
                 })
                 navigate('/');
             }).catch((error) => {
@@ -66,7 +73,7 @@ const AuthForm = ({ spotifyOAuth , onSpotifyAuthClick }) => {
 
     const googleAuthHandler = () => {
         signInWithPopup(auth, provider)
-            .then((result) => {
+            .then(async (result) => {
                 // This gives you a Google Access Token. You can use it to access the Google API.
                 const credential = GoogleAuthProvider.credentialFromResult(result);
                 const token = credential.accessToken;
@@ -74,6 +81,11 @@ const AuthForm = ({ spotifyOAuth , onSpotifyAuthClick }) => {
                 const user = result.user;
                 // IdP data available using getAdditionalUserInfo(result)
                 // ...
+                await axios.post(`http://localhost:8080/api/user/`, {
+                    userId: user.uid,
+                    name: user.displayName,
+                    email: user.email
+                });
                 navigate('/');
             }).catch((error) => {
             // Handle Errors here.
@@ -105,7 +117,7 @@ const AuthForm = ({ spotifyOAuth , onSpotifyAuthClick }) => {
                     <p className="form__title">{authType ? 'Login' : 'Register'}</p>
                     {!authType && (
                         <div className="control">
-                            <input className="control__input" type="text" id="name" placeholder="Full Name" required/>
+                            <input ref={nameInputRef} className="control__input" type="text" id="name" placeholder="Full Name" required/>
                         </div>
                     )}
                     <div className="control">
