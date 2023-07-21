@@ -5,6 +5,7 @@ import img from "../assets/man_listening_headphones.png";
 import { refreshToken } from "../redux/user/user.actions";
 import { fetchCurrentPlayingSongThunk } from "../redux/songs/songs.actions";
 import { useDispatch } from "react-redux";
+import { fetchPlaybackStateThunk } from "../redux/playbacks/playbacks.actions";
 
 function Home() {
   const getParamsFromSpotifyAuth = (hash) => {
@@ -32,12 +33,14 @@ function Home() {
       // add to db or firebase
 
       // fetch current playing song test
-      dispatch(fetchCurrentPlayingSongThunk(access_token));
-      
+    //   dispatch(fetchCurrentPlayingSongThunk(access_token));
+
+      //fetch playback_state test
+      dispatch(fetchPlaybackStateThunk(access_token));
       // refresh token test
-      refreshToken(refresh_token).then(({ access_token }) => {
-        console.log("new access_token", access_token);
-      });
+    //   refreshToken(refresh_token).then(({ access_token }) => {
+    //     console.log("new access_token", access_token);
+    //   });
     }
   });
 

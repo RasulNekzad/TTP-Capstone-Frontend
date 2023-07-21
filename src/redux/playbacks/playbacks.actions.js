@@ -1,5 +1,6 @@
 import axios from "axios";
 import PlaybacksActionType from "./playbacks.types";
+import { async } from "q";
 
 export const fetchAllPlaybacks = (payload) => ({
   type: PlaybacksActionType.FETCH_ALL_PLAYBACKS,
@@ -69,6 +70,25 @@ export const fetchPersonalPlaybackThunk = (userId) => {
       );
       console.log("THUNK API CALL PERSONAL PLAYBACK =>", response.data.content);
       dispatch(fetchPersonalPlayback(response.data.content));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+};
+
+export const fetchPlaybackState = (payload) => ({
+  type: PlaybacksActionType.FETCH_PLAYBACK_STATE,
+  payload,
+});
+
+export const fetchPlaybackStateThunk = (access_token) => {
+  return async (dispatch) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/api/song/playback-state?access_token=${access_token}`
+      );
+      console.log("THUNK API CALL PLAYBACK STATE =>", response.data);
+      dispatch(fetchPlaybackState(response.data));
     } catch (error) {
       console.error(error);
     }
