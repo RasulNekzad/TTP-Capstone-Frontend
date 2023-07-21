@@ -3,6 +3,8 @@ import { Button } from "react-bootstrap";
 import React, { useEffect } from "react";
 import img from "../assets/man_listening_headphones.png";
 import { refreshToken } from "../redux/user/user.actions";
+import { fetchCurrentPlayingSongThunk } from "../redux/songs/songs.actions";
+import { useDispatch } from "react-redux";
 
 function Home() {
   const getParamsFromSpotifyAuth = (hash) => {
@@ -16,6 +18,7 @@ function Home() {
     }, {});
     return params;
   };
+  const dispatch = useDispatch();
 
   useEffect(() => {
     /**
@@ -28,6 +31,9 @@ function Home() {
       console.log("Token", { access_token, refresh_token });
       // add to db or firebase
 
+      // fetch current playing song test
+      dispatch(fetchCurrentPlayingSongThunk(access_token));
+      
       // refresh token test
       refreshToken(refresh_token).then(({ access_token }) => {
         console.log("new access_token", access_token);
