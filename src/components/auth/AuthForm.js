@@ -103,7 +103,7 @@ const AuthForm = ({spotifyOAuth, onSpotifyAuthClick}) => {
         onSpotifyAuthClick(); // Trigger the callback when the Spotify button is clicked
     }
     return (
-        <ProtectedRoute>
+        <ProtectedRoute page="auth">
             <div className="auth">
                 <div className="auth-container">
                     <div className="authSelect">
