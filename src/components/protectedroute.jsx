@@ -16,14 +16,20 @@ import {getAuth} from "firebase/auth";
     Else the registered user will be directed to the intended path
  * Modify as needed 
  */
-const ProtectedRoute = ({redirectPath = "/login", children }) => {
+const ProtectedRoute = ({redirectPath = "/login", children, page}) => {
   const auth = getAuth();
   const user = auth.currentUser;
 
+  if (page === "auth") {
+    if (user) {
+      return <Navigate to={"/"} replace/>;
+    } else {
+      return children;
+    }
+  }
+
   if (!user) {
     return <Navigate to={redirectPath} replace />;
-  } else {
-    return <Navigate to={"/"} replace />;
   }
 };
 
