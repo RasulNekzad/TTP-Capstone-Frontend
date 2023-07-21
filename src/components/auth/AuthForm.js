@@ -1,24 +1,25 @@
 import './AuthForm.css';
-import {useContext, useRef, useState} from "react";
+import {useContext, useEffect, useRef, useState} from "react";
 import {
     setPersistence,
     signInWithEmailAndPassword,
     browserSessionPersistence,
     onAuthStateChanged,
-    createUserWithEmailAndPassword
+    createUserWithEmailAndPassword, getAuth
 } from "firebase/auth";
 import {auth} from "../../firebaseConfig";
 import AuthCodeMap from "./AuthCodeMap";
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import {GoogleAuthProvider, signInWithPopup} from "firebase/auth";
 import {useNavigate} from "react-router-dom";
 import googleLogo from '../../assets/google.png'
 import {Alert} from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchSpotifyOAuthThunk } from "../../redux/user/user.actions";
+import {useDispatch, useSelector} from "react-redux";
+import {fetchSpotifyOAuthThunk} from "../../redux/user/user.actions";
 import AuthContext from "../../context/AuthProviderContext";
 import axios from "axios";
+import ProtectedRoute from "../protectedroute";
 
-const AuthForm = ({ spotifyOAuth , onSpotifyAuthClick }) => {
+const AuthForm = ({spotifyOAuth, onSpotifyAuthClick}) => {
     const provider = new GoogleAuthProvider();
     const navigate = useNavigate();
     const {login} = useContext(AuthContext);
@@ -102,46 +103,49 @@ const AuthForm = ({ spotifyOAuth , onSpotifyAuthClick }) => {
         onSpotifyAuthClick(); // Trigger the callback when the Spotify button is clicked
     }
     return (
-        <div className="auth">
-            <div className="auth-container">
-                <div className="authSelect">
-                    <button className={(authType ? "active" : '')}
-                            onClick={authTypeHandler(true)}>Login
-                    </button>
-                    <button className={(!authType ? "active" : '')}
-                            onClick={authTypeHandler(false)}>Register
-                    </button>
-                </div>
-                <form onSubmit={submitHandler} className="form">
-                    {error && <Alert variant="warning">{error}</Alert>}
-                    <p className="form__title">{authType ? 'Login' : 'Register'}</p>
-                    {!authType && (
+        <ProtectedRoute>
+            <div className="auth">
+                <div className="auth-container">
+                    <div className="authSelect">
+                        <button className={(authType ? "active" : '')}
+                                onClick={authTypeHandler(true)}>Login
+                        </button>
+                        <button className={(!authType ? "active" : '')}
+                                onClick={authTypeHandler(false)}>Register
+                        </button>
+                    </div>
+                    <form onSubmit={submitHandler} className="form">
+                        {error && <Alert variant="warning">{error}</Alert>}
+                        <p className="form__title">{authType ? 'Login' : 'Register'}</p>
+                        {!authType && (
+                            <div className="control">
+                                <input ref={nameInputRef} className="control__input" type="text" id="name"
+                                       placeholder="Full Name" required/>
+                            </div>
+                        )}
                         <div className="control">
-                            <input ref={nameInputRef} className="control__input" type="text" id="name" placeholder="Full Name" required/>
+                            <input ref={emailInputRef} className="control__input" type="email" id="email"
+                                   placeholder="Email"
+                                   required/>
                         </div>
-                    )}
-                    <div className="control">
-                        <input ref={emailInputRef} className="control__input" type="email" id="email"
-                               placeholder="Email"
-                               required/>
-                    </div>
-                    <div className="control">
-                        <input ref={passwordInputRef} className="control__input" type="password" id="password"
-                               placeholder="Password" required/>
-                    </div>
-                    <button className="actions__button">{authType ? 'Login' : 'Register'}</button>
-                    <hr className="divider"/>
-                    <button type="button" onClick={googleAuthHandler} className="button">
-                        <img className="button__logo" src={googleLogo} alt="google icon"/>
-                        <span className="button__text">Continue With Google</span>
-                    </button>
-                    <button type="button" onClick={spotifyAuthHandler} className="button">
-                        {/* <img className="button__logo" src={googleLogo} alt="google icon"/> */}
-                        <span className="button__text">Continue With Spotify</span>
-                    </button>
-                </form>
+                        <div className="control">
+                            <input ref={passwordInputRef} className="control__input" type="password" id="password"
+                                   placeholder="Password" required/>
+                        </div>
+                        <button className="actions__button">{authType ? 'Login' : 'Register'}</button>
+                        <hr className="divider"/>
+                        <button type="button" onClick={googleAuthHandler} className="button">
+                            <img className="button__logo" src={googleLogo} alt="google icon"/>
+                            <span className="button__text">Continue With Google</span>
+                        </button>
+                        <button type="button" onClick={spotifyAuthHandler} className="button">
+                            {/* <img className="button__logo" src={googleLogo} alt="google icon"/> */}
+                            <span className="button__text">Continue With Spotify</span>
+                        </button>
+                    </form>
+                </div>
             </div>
-        </div>
+        </ProtectedRoute>
     )
 }
 

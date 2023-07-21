@@ -1,5 +1,7 @@
-import React from "react";
+import React, {useContext} from "react";
 import { Navigate } from "react-router";
+import AuthContext from "../context/AuthProviderContext";
+import {getAuth} from "firebase/auth";
 
 /**
  * default redirectPath is login
@@ -14,11 +16,15 @@ import { Navigate } from "react-router";
     Else the registered user will be directed to the intended path
  * Modify as needed 
  */
-const ProtectedRoute = ({ user, redirectPath = "/login", children }) => {
+const ProtectedRoute = ({redirectPath = "/login", children }) => {
+  const auth = getAuth();
+  const user = auth.currentUser;
+
   if (!user) {
     return <Navigate to={redirectPath} replace />;
+  } else {
+    return <Navigate to={"/"} replace />;
   }
-  return children;
 };
 
 export default ProtectedRoute
