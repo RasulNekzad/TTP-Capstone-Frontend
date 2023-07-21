@@ -1,11 +1,11 @@
 import './AuthForm.css';
-import {useContext, useEffect, useRef, useState} from "react";
+import {useContext, useRef, useState} from "react";
 import {
     setPersistence,
     signInWithEmailAndPassword,
     browserSessionPersistence,
     onAuthStateChanged,
-    createUserWithEmailAndPassword, getAuth
+    createUserWithEmailAndPassword,
 } from "firebase/auth";
 import {auth} from "../../firebaseConfig";
 import AuthCodeMap from "./AuthCodeMap";
@@ -13,8 +13,6 @@ import {GoogleAuthProvider, signInWithPopup} from "firebase/auth";
 import {useNavigate} from "react-router-dom";
 import googleLogo from '../../assets/google.png'
 import {Alert} from "react-bootstrap";
-import {useDispatch, useSelector} from "react-redux";
-import {fetchSpotifyOAuthThunk} from "../../redux/user/user.actions";
 import AuthContext from "../../context/AuthProviderContext";
 import axios from "axios";
 import ProtectedRoute from "../protectedroute";
@@ -102,6 +100,7 @@ const AuthForm = ({spotifyOAuth, onSpotifyAuthClick}) => {
     const spotifyAuthHandler = () => {
         onSpotifyAuthClick(); // Trigger the callback when the Spotify button is clicked
     }
+
     return (
         <ProtectedRoute page="auth">
             <div className="auth">
@@ -119,28 +118,24 @@ const AuthForm = ({spotifyOAuth, onSpotifyAuthClick}) => {
                         <p className="form__title">{authType ? 'Login' : 'Register'}</p>
                         {!authType && (
                             <div className="control">
-                                <input ref={nameInputRef} className="control__input" type="text" id="name"
+                                <input ref={nameInputRef} className="auth__control__input" type="text" id="name"
                                        placeholder="Full Name" required/>
                             </div>
                         )}
                         <div className="control">
-                            <input ref={emailInputRef} className="control__input" type="email" id="email"
+                            <input ref={emailInputRef} className="auth__control__input" type="email" id="email"
                                    placeholder="Email"
                                    required/>
                         </div>
                         <div className="control">
-                            <input ref={passwordInputRef} className="control__input" type="password" id="password"
+                            <input ref={passwordInputRef} className="auth__control__input" type="password" id="password"
                                    placeholder="Password" required/>
                         </div>
                         <button className="actions__button">{authType ? 'Login' : 'Register'}</button>
-                        <hr className="divider"/>
+                        <hr className="auth__divider"/>
                         <button type="button" onClick={googleAuthHandler} className="button">
                             <img className="button__logo" src={googleLogo} alt="google icon"/>
                             <span className="button__text">Continue With Google</span>
-                        </button>
-                        <button type="button" onClick={spotifyAuthHandler} className="button">
-                            {/* <img className="button__logo" src={googleLogo} alt="google icon"/> */}
-                            <span className="button__text">Continue With Spotify</span>
                         </button>
                     </form>
                 </div>

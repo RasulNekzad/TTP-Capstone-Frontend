@@ -4,13 +4,19 @@
     height: 93vh;
     justify-content: center;
     align-items: center;
-    z-index: -1;
     background: linear-gradient(112.1deg, rgb(32, 38, 57) 11.4%, rgb(63, 76, 119) 70.2%);
 }
 
 .auth-container {
     width: 45rem;
 }
+@media only screen and (max-width: 720px) {
+    .auth-container {
+        height: 93vh;
+        width: 100vw;
+    }
+}
+
 @media only screen and (max-width: 460px) {
     .auth-page {
         width: 100%;
@@ -28,9 +34,14 @@
     font-weight: 600;
     flex: 1;
     padding-top: 0.5rem;
-    padding-bottom: 3px;
+    padding-bottom: 5px;
     border: none;
     cursor: pointer;
+}
+@media only screen and (max-width: 460px) {
+    .authSelect > * {
+        height: 3.75rem;
+    }
 }
 .authSelect > *:not(.active):hover {
     background-color: #333333;
@@ -51,12 +62,20 @@
     border-bottom-left-radius: 5%;
     border-bottom-right-radius: 5%;
 }
-@media only screen and (max-width: 460px) {
+@media only screen and (max-width: 720px) {
     .form {
+        height: 87vh;
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;
     }
 }
+@media only screen and (max-width: 460px) {
+    .form {
+        justify-content: flex-start;
+        padding: 1rem 0 0;
+    }
+}
+
 .form__title {
      padding-bottom: 1rem;
      font-weight: 700;
@@ -66,7 +85,7 @@
 .control {
     margin-bottom: 2rem;
 }
-.control__input {
+.auth__control__input {
     font-family: inherit;
     font-size: inherit;
     color: inherit;
@@ -89,6 +108,17 @@
     cursor: pointer;
     transition: all 0.2s ease;
 }
+@media only screen and (max-width: 460px) {
+    .auth__control__input {
+        height: 2.5rem;
+        width: 18rem;
+    }
+    .actions__button {
+        height: 2.5rem;
+        width: 18rem;
+    }
+}
+
 .actions__button:hover {
     background-color: #52da80;
 }
@@ -126,8 +156,19 @@
     color: white;
 }
 
-.divider {
+.auth__divider {
     border: 1px solid #000000;
     width: 30rem;
-    margin: 40px 0;
+    margin: 30px 0;
+}
+@media only screen and (max-width: 720px) {
+    .auth__divider {
+        width: 20rem;
+    }
+    .button {
+        width: 18rem;
+    }
+    .button__text {
+        font-size: 1.15rem;
+    }
 }

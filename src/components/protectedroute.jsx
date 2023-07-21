@@ -31,6 +31,7 @@ const ProtectedRoute = ({redirectPath = "/login", children, page}) => {
   if (!user) {
     return <Navigate to={redirectPath} replace />;
   }
+  return children;
 };
 
 export default ProtectedRoute
