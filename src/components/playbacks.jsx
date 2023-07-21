@@ -1,36 +1,50 @@
 import React, { useEffect, useState } from 'react';
 import { GoogleMap, LoadScript, Marker, InfoWindow } from '@react-google-maps/api';
-import SpotifyPlayer from "react-spotify-web-playback";
 
 const Playbacks = ({ playbacks }) => {
   const [currentLatitude, setCurrentLatitude] = useState(0);
   const [currentLongitude, setCurrentLongitude] = useState(0);
   const [map, setMap] = useState(null);
   const [markers, setMarkers] = useState([]);
-  const [selectedTrack, setSelectedTrack] = useState(false);
+  const [selectedTrack, setSelectedTrack] = useState(null);
 
   const success = (position) => {
     const { latitude, longitude } = position.coords;
-
-    // Check if the new latitude or longitude differs from the previous values
-    if (parseFloat(latitude) !== currentLatitude || parseFloat(longitude) !== currentLongitude) {
-      setCurrentLatitude(parseFloat(latitude));
-      setCurrentLongitude(parseFloat(longitude));
-    }
+    setCurrentLatitude(parseFloat(latitude));
+    setCurrentLongitude(parseFloat(longitude));
   };
 
   useEffect(() => {
-    // Use watchPosition to continuously track location changes
-    const watchId = navigator.geolocation.watchPosition(success);
-
-    // Clear the watch when the component unmounts
-    return () => {
-      navigator.geolocation.clearWatch(watchId);
+    const geoLocationOptions = {
+      enableHighAccuracy: true,
+      timeout: 5000,
+      maximumAge: 0,
     };
-  }, [currentLatitude, currentLongitude]);
+
+    const handleLocationChange = (position) => {
+      success(position);
+      // Handle any additional logic you want to perform when the location changes
+    };
+
+    const handleLocationError = (error) => {
+      console.error('Error getting location:', error);
+      // Handle any errors that occur while getting the location
+    };
+
+    const geoLocationWatchId = navigator.geolocation.watchPosition(
+      handleLocationChange,
+      handleLocationError,
+      geoLocationOptions
+    );
+
+    // Clean up the watcher when the component unmounts
+    return () => {
+      navigator.geolocation.clearWatch(geoLocationWatchId);
+    };
+  }, []); // Empty dependency array to run only on mount
 
   const mapOptions = {
-    zoom: 10,
+    zoom: 15,
     center: { lat: currentLatitude, lng: currentLongitude },
   };
 
@@ -39,18 +53,22 @@ const Playbacks = ({ playbacks }) => {
   useEffect(() => {
     if (map && playbacks) {
       const newMarkers = playbacks.map((playback) => {
-        const { latitude, longitude } = playback;
-        const { image_url } = playback;
+        const { trackName, artistName, trackUrl, previewUrl, image } = playback;
         return {
           position: {
-            lat: parseFloat(latitude),
-            lng: parseFloat(longitude),
+            lat: currentLatitude,
+            lng: currentLongitude,
           },
           icon: {
-            url: image_url, // Use the song image as the marker icon
-            scaledSize: new window.google.maps.Size(30, 30), // Adjust the size of the icon
+            // Add your custom marker icon here
+            url: `${image.url}`,
+            scaledSize: new window.google.maps.Size(50, 50), // Adjust the size of the icon
           },
-          text: `(${latitude}, ${longitude})`
+          trackName,
+          artistName,
+          trackUrl,
+          previewUrl,
+          image,
         };
       });
       setMarkers(newMarkers);
@@ -61,13 +79,12 @@ const Playbacks = ({ playbacks }) => {
     setMap(map);
   };
 
-  const handleMarkerClick = () => {
-    // If the selected track is the same as the clicked track, close the InfoWindow
-    setSelectedTrack(true);
+  const handleMarkerClick = (marker) => {
+    setSelectedTrack(marker);
   };
 
   const handleCloseInfoWindow = () => {
-    setSelectedTrack(false); // Close the InfoWindow by resetting the selectedTrack state
+    setSelectedTrack(null); // Close the InfoWindow by resetting the selectedTrack state
   };
 
   return (
@@ -78,23 +95,33 @@ const Playbacks = ({ playbacks }) => {
           options={mapOptions}
           onLoad={onLoad}
         >
-          {markers.map((marker, index) => (
-            <Marker
-              key={index}
-              position={marker.position}
-              icon={marker.icon}
-              label={marker.text}
-              onClick={handleMarkerClick}
+          {map &&
+            markers.map((marker, index) => (
+              <Marker
+                key={index}
+                position={marker.position}
+                icon={marker.icon}
+                onClick={() => handleMarkerClick(marker)}
+              />
+            ))}
+          {selectedTrack && (
+            <InfoWindow
+              position={selectedTrack.position}
+              onCloseClick={handleCloseInfoWindow}
             >
-              {selectedTrack && (<InfoWindow
-                onCloseClick={handleCloseInfoWindow}
-              >
-                <audio controls>
-                  <source src={"https://p.scdn.co/mp3-preview/7764c953b83f2eb2259e5bd4fcf6559c3ba0d670?cid=0b6fbd37eea445a29e484f2eb8d51b1b"} type="audio/mpeg" />
-                </audio>
-              </InfoWindow>)}
-            </Marker>
-          ))}
+              <div>
+              <h3>{selectedTrack.trackName}</h3>
+              <p>Artist: {selectedTrack.artistName}</p>
+              <p>Played Time: {selectedTrack.playedTime}</p>
+              <audio controls>
+                <source src={selectedTrack.previewUrl} type="audio/mpeg" />
+              </audio>
+              <a href={selectedTrack.trackUrl} target="_blank" rel="noopener noreferrer">
+                Listen to Full Song
+              </a>
+              </div>
+            </InfoWindow>
+          )}
         </GoogleMap>
       </LoadScript>
     </div>
