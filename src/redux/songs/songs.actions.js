@@ -46,19 +46,27 @@ export const fetchCurrentPlayingSong = (payload) => ({
   payload,
 });
 
-export const fetchCurrentPlayingSongThunk = (accessToken) => {
+export const fetchCurrentPlayingSongThunk = (access_token) => {
   return async (dispatch) => {
     try {
       const response = await axios.get(
-        `https://api.spotify.com/v1/me/player/currently-playing`,
-        {
-          headers: {
-            Authorization: "Bearer " + accessToken,
-          },
-        }
+        `http://localhost:8080/api/song/currently-playing?access_token=${access_token}`
       );
       console.log("SPOTIFY API CALL CURRENT PLAYING SONG =>", response.data);
-      dispatch(fetchCurrentPlayingSong(response.data));
+      if (response.data.is_playing) {
+        const title = response.data.item.name;
+        const artist = response.data.item.artists[0].name;
+        const imageUrl = response.data.item.album.images[0].url;
+        const externalUrl = response.data.item.external_urls.spotify;
+        const song = {
+          title: title,
+          artist: artist,
+          image_url: imageUrl,
+          external_url: externalUrl,
+        };
+        dispatch(fetchCurrentPlayingSong(song));
+        dispatch(addSongThunk(song));
+      }
     } catch (error) {
       console.error(error);
     }
