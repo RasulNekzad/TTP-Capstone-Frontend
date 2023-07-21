@@ -1,10 +1,11 @@
 import './UserProfile.css';
 import spotifyLogo from "../../assets/spotify.png";
 import {useNavigate} from "react-router-dom";
-import {useRef, useState} from "react";
-import { getAuth, updatePassword, deleteUser } from "firebase/auth";
-import {fetchSpotifyOAuthThunk} from "../../redux/user/user.actions";
+import {useEffect, useRef, useState} from "react";
+import {getAuth, updatePassword, deleteUser} from "firebase/auth";
+import {fetchSpotifyOAuthThunk, fetchUserProfileThunk} from "../../redux/user/user.actions";
 import {useDispatch} from "react-redux";
+import ProtectedRoute from "../protectedroute";
 
 function UserProfile() {
     const navigate = useNavigate();
@@ -16,7 +17,16 @@ function UserProfile() {
     const auth = getAuth();
     const user = auth.currentUser;
 
+    useEffect(() => {
+        if (user) {
+            retrieveUserHandler();
+        }
+    })
+
     // Fetch user profile from database
+    const retrieveUserHandler = () => {
+        dispatch(fetchUserProfileThunk(user.uid));
+    }
 
     const resetPwHandler = () => {
         setShowResetPw(!showResetPw);
@@ -48,41 +58,44 @@ function UserProfile() {
     }
 
     return (
-        <div className="main">
-            <div className="container">
-                <h1>User Profile</h1>
-                <div className="profile">
-                    <img className="profile__pic"
-                         src="https://t4.ftcdn.net/jpg/00/64/67/63/360_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg"
-                         alt="user image"/>
+        <ProtectedRoute>
+            <div className="main">
+                <div className="container">
+                    <h1>User Profile</h1>
+                    <div className="profile">
+                        <img className="profile__pic"
+                             src="https://t4.ftcdn.net/jpg/00/64/67/63/360_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg"
+                             alt="user image"/>
+                        <div>
+                            <h1 className="profile__name">Jane Doe</h1>
+                            <button onClick={resetPwHandler} className="reset__button">Reset Your Password?</button>
+                            {showResetPw &&
+                                <div className="reset__pw">
+                                    <input ref={passwordInputRef} className="control__input" type="password"
+                                           id="password"
+                                           placeholder="Password" required/>
+                                    <button onClick={changePasswordHandler} className="submit__button">Submit</button>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <hr className="divider"/>
+                    <div className="profile__spotify">
+                        <h1 className="spotify__text">Want to share what you're listening to with the world?</h1>
+                        <button type="button" onClick={linkSpotifyHandler} className="button">
+                            <img className="button__logo" src={spotifyLogo} alt="spotify icon"/>
+                            <span className="button__text">Connect To Spotify</span>
+                        </button>
+                    </div>
+                    <hr className="divider"/>
                     <div>
-                        <h1 className="profile__name">Jane Doe</h1>
-                        <button onClick={resetPwHandler} className="reset__button">Reset Your Password?</button>
-                        {showResetPw &&
-                            <div className="reset__pw">
-                                <input ref={passwordInputRef} className="control__input" type="password" id="password"
-                                       placeholder="Password" required/>
-                                <button onClick={changePasswordHandler} className="submit__button">Submit</button>
-                            </div>
-                        }
+                        <button onClick={deleteAccountHandler} type="button" className="delete__button">
+                            <span>Close Account</span>
+                        </button>
                     </div>
                 </div>
-                <hr className="divider"/>
-                <div className="profile__spotify">
-                    <h1 className="spotify__text">Want to share what you're listening to with the world?</h1>
-                    <button type="button" onClick={linkSpotifyHandler} className="button">
-                        <img className="button__logo" src={spotifyLogo} alt="spotify icon"/>
-                        <span className="button__text">Connect To Spotify</span>
-                    </button>
-                </div>
-                <hr className="divider"/>
-                <div>
-                    <button onClick={deleteAccountHandler} type="button" className="delete__button">
-                        <span>Close Account</span>
-                    </button>
-                </div>
             </div>
-        </div>
+        </ProtectedRoute>
     )
 }
 
