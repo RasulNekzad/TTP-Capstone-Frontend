@@ -53,20 +53,7 @@ export const fetchCurrentPlayingSongThunk = (access_token) => {
         `http://localhost:8080/api/song/currently-playing?access_token=${access_token}`
       );
       console.log("SPOTIFY API CALL CURRENT PLAYING SONG =>", response.data);
-      if (response.data.is_playing) {
-        const title = response.data.item.name;
-        const artist = response.data.item.artists[0].name;
-        const imageUrl = response.data.item.album.images[0].url;
-        const externalUrl = response.data.item.external_urls.spotify;
-        const song = {
-          title: title,
-          artist: artist,
-          image_url: imageUrl,
-          external_url: externalUrl,
-        };
-        dispatch(fetchCurrentPlayingSong(song));
-        dispatch(addSongThunk(song));
-      }
+      dispatch(fetchCurrentPlayingSong(response.data));
     } catch (error) {
       console.error(error);
     }
