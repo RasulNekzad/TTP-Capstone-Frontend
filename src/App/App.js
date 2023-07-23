@@ -11,6 +11,7 @@ import UserProfile from "../components/user/UserProfile";
 import PlaybacksNearby from "../pages/playbacksNearby";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useEffect } from "react";
+import PlaybacksHistory from "../pages/playbacksHistory";
 
 function App() {
   /* Test with mock data.  mockSong should be currently playing from spotify
@@ -117,14 +118,15 @@ function App() {
     //   {item ? <h1>{item.name}</h1> : <h1>Loading</h1>} */}
     // </div>
     <Router>
-        <TopNavbar/>
-            <Routes>
-                <Route path="/" element={<Home/>} />
-                <Route path="/login" element={<Auth/>}/>
-                <Route path="/user" element={<UserProfile />} />
-                <Route path="/user/:id" element={<User />} />
-                <Route path="/songs" element={<PlaybacksNearby />} />
-            </Routes>
+      <TopNavbar />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Auth />} />
+        <Route path="/user" element={<UserProfile />} />
+        <Route path="/user/:id" element={<User />} />
+        <Route path="/songs" element={<PlaybacksNearby />} />
+        <Route path="/history" element={<PlaybacksHistory />} />
+      </Routes>
     </Router>
   );
 }
