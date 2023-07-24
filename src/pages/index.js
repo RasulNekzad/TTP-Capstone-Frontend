@@ -2,6 +2,7 @@ import "./index.css";
 import { Button } from "react-bootstrap";
 import React, { useEffect } from "react";
 import img from "../assets/man_listening_headphones.png";
+import backgroundImg from "../assets/spotify_background.png";
 import { refreshToken } from "../redux/user/user.actions";
 import { fetchCurrentPlayingSongThunk } from "../redux/songs/songs.actions";
 import { useDispatch } from "react-redux";
@@ -33,34 +34,62 @@ function Home() {
       // add to db or firebase
 
       // fetch current playing song test
-    //   dispatch(fetchCurrentPlayingSongThunk(access_token));
+      //   dispatch(fetchCurrentPlayingSongThunk(access_token));
 
       //fetch playback_state test
       dispatch(fetchPlaybackStateThunk(access_token));
       // refresh token test
-    //   refreshToken(refresh_token).then(({ access_token }) => {
-    //     console.log("new access_token", access_token);
-    //   });
+      //   refreshToken(refresh_token).then(({ access_token }) => {
+      //     console.log("new access_token", access_token);
+      //   });
     }
   });
 
   return (
-    <div className="header">
-      <div className="header__col--1">
-        <div className="header__text">Spotify Proximity</div>
-        <h6>Ever wondered what music people around you are listening to?</h6>
-        <div className="header__button">
-          <Button href="/songs">Get Started!</Button>
+    <>
+      <div className="header">
+        <div className="header__col--1">
+          <div className="header__text">Spotify Proximity</div>
+          <h6>Ever wondered what music people around you are listening to?</h6>
+          <div className="header__button">
+            <Button href="/songs" variant="dark">
+              Get Started!
+            </Button>
+          </div>
+        </div>
+        <div className="header__col--2">
+          <img
+            className="header__image"
+            src={img}
+            alt="person listening to music"
+          />
         </div>
       </div>
-      <div className="header__col--2">
-        <img
-          className="header__image"
-          src={img}
-          alt="person listening to music"
-        />
+      <div className="header--2">
+        <div className="header__col--4">
+          <div className="header__text">More About Our App</div>
+          <h6>
+            Discover the rhythms of your proximity. Explore the melodic
+            <br />
+            tapestry of the people around you, and uncover the tunes
+            <br /> that set the rhythm of their lives. Be a part of the global
+            <br /> harmony by sharing your favorite tracks with the community.
+            <br /> Experience the joy of harmonizing with others, one melody
+            <br /> at a time.
+          </h6>
+          <div className="header__button--2">
+            <Button variant="dark">Learn More</Button>
+          </div>
+        </div>
+        <div className="header__col--3">
+          <img
+            className="header__background_image"
+            src={backgroundImg}
+            alt="spotify"
+          />
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
