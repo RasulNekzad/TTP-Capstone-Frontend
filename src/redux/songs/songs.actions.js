@@ -71,6 +71,7 @@ export const addSong = (payload) => ({
     "artist": "someartist",
     "image_url": "imageurl",
     "external_url": "externalurl"
+    "preview_url": "preview_url"
     }
  */
 export const addSongThunk = (song) => {
