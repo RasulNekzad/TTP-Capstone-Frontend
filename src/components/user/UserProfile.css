@@ -2,6 +2,11 @@
     background-color: black;
     height: 93vh;
 }
+@media only screen and (max-width: 800px) {
+    .main {
+        background-color: white;
+    }
+}
 
 .container {
     height: 93vh;
@@ -16,11 +21,18 @@
     flex-direction: column;
 }
 
+@media only screen and (max-width: 800px) {
+    .container {
+        height: 87vh;
+        padding-left: 1.5rem !important;
+        padding-right: 1.5rem !important;
+    }
+}
+
 .profile {
     margin-top: 1.5rem;
     display: flex;
     flex-direction: row;
-    align-items: center;
 }
 
 .profile__pic {
@@ -29,11 +41,39 @@
     border: 1px solid black;
     margin-right: 2rem;
 }
+@media only screen and (max-width: 800px) {
+    .profile__pic {
+        margin-right: 1.25rem;
+        height: 7.55rem;
+    }
+}
+@media only screen and (max-width: 479px) {
+    .profile__pic {
+        height: 6rem;
+    }
+}
 
 .profile__name {
     font-size: 2rem;
     font-weight: 700;
     margin-bottom: 1rem;
+}
+
+.spotify__button {
+    height: 3.5rem;
+    background-color: rgba(0, 0, 0, 0.76);
+    border: 2px solid black;
+
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+
+    border-radius: 1.5rem;
 }
 
 .spotify__text {
@@ -43,6 +83,12 @@
 .reset__pw {
     display: flex;
     flex-direction: row;
+}
+@media only screen and (max-width: 800px) {
+    .reset__pw {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }
 
 .reset__button {
@@ -60,6 +106,16 @@
     padding: 0 1rem;
     margin-bottom: 1rem;
 }
+@media only screen and (max-width: 800px) {
+    .control__input {
+        width: 17.5rem;
+    }
+}
+@media only screen and (max-width: 479px) {
+    .control__input {
+        width: 10rem;
+    }
+}
 
 .submit__button {
     height: 2.5rem;
@@ -68,6 +124,12 @@
     font-size: 1.25rem;
     margin-bottom: 1rem;
 }
+@media only screen and (max-width: 800px) {
+    .submit__button {
+        margin-left: 0;
+    }
+}
+
 
 .delete__button {
     border-bottom: 1px solid black;
@@ -84,5 +146,4 @@
 .divider {
     width: 100%;
     border-bottom: 1px solid black;
-    margin-bottom: 2rem;
 }
