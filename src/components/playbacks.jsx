@@ -1,5 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { GoogleMap, LoadScript, Marker, InfoWindow } from '@react-google-maps/api';
+import React, { useEffect, useState } from "react";
+import {
+  GoogleMap,
+  LoadScript,
+  Marker,
+  InfoWindow,
+} from "@react-google-maps/api";
 
 const Playbacks = ({ playbacks }) => {
   const [currentLatitude, setCurrentLatitude] = useState(0);
@@ -27,7 +32,7 @@ const Playbacks = ({ playbacks }) => {
     };
 
     const handleLocationError = (error) => {
-      console.error('Error getting location:', error);
+      console.error("Error getting location:", error);
       // Handle any errors that occur while getting the location
     };
 
@@ -53,22 +58,30 @@ const Playbacks = ({ playbacks }) => {
   useEffect(() => {
     if (map && playbacks) {
       const newMarkers = playbacks.map((playback) => {
-        const { trackName, artistName, trackUrl, previewUrl, image } = playback;
+        const {
+          title,
+          artist,
+          external_url,
+          preview_url,
+          image_url,
+          latitude,
+          longitude,
+        } = playback;
         return {
           position: {
-            lat: currentLatitude,
-            lng: currentLongitude,
+            lat: parseFloat(latitude),
+            lng: parseFloat(longitude),
           },
           icon: {
             // Add your custom marker icon here
-            url: `${image.url}`,
+            url: image_url,
             scaledSize: new window.google.maps.Size(50, 50), // Adjust the size of the icon
           },
-          trackName,
-          artistName,
-          trackUrl,
-          previewUrl,
-          image,
+          title,
+          artist,
+          external_url,
+          preview_url,
+          image_url,
         };
       });
       setMarkers(newMarkers);
@@ -88,10 +101,10 @@ const Playbacks = ({ playbacks }) => {
   };
 
   return (
-    <div style={{ height: '400px', width: '100%' }}>
+    <div style={{ height: "400px", width: "100%" }}>
       <LoadScript googleMapsApiKey={apiKey}>
         <GoogleMap
-          mapContainerStyle={{ height: '100%', width: '100%' }}
+          mapContainerStyle={{ height: "100%", width: "100%" }}
           options={mapOptions}
           onLoad={onLoad}
         >
@@ -110,15 +123,19 @@ const Playbacks = ({ playbacks }) => {
               onCloseClick={handleCloseInfoWindow}
             >
               <div>
-              <h3>{selectedTrack.trackName}</h3>
-              <p>Artist: {selectedTrack.artistName}</p>
-              <p>Played Time: {selectedTrack.playedTime}</p>
-              <audio controls>
-                <source src={selectedTrack.previewUrl} type="audio/mpeg" />
-              </audio>
-              <a href={selectedTrack.trackUrl} target="_blank" rel="noopener noreferrer">
-                Listen to Full Song
-              </a>
+                <h3>{selectedTrack.title}</h3>
+                <p>Artist: {selectedTrack.artist}</p>
+                <p>Played Time: {selectedTrack.playedTime}</p>
+                <audio controls>
+                  <source src={selectedTrack.preview_url} type="audio/mpeg" />
+                </audio>
+                <a
+                  href={selectedTrack.external_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Listen to Full Song
+                </a>
               </div>
             </InfoWindow>
           )}

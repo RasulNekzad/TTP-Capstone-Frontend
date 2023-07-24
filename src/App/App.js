@@ -1,4 +1,4 @@
-import { addSongThunk, fetchAllSongsThunk } from "../redux/songs/songs.actions";
+import { fetchCurrentPlayingSongThunk } from "../redux/songs/songs.actions";
 import { createPlaybackThunk } from "../redux/playbacks/playbacks.actions";
 import { useDispatch, useSelector } from "react-redux";
 // import { Button } from "react-bootstrap";
@@ -12,105 +12,59 @@ import PlaybacksNearby from "../pages/playbacksNearby";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useEffect } from "react";
 import PlaybacksHistory from "../pages/playbacksHistory";
+import { getAuth } from "firebase/auth";
 
 function App() {
-  /* Test with mock data.  mockSong should be currently playing from spotify
-  const thirySecondsMs = 30000;
-  const dispatch = useDispatch();
+  /* Populating the db with currently playing song every 30 seconds
+   * Will require access token from spotify
 
-  // TODO: Don't use state for songs,
-  // Return single song from backend
-  // Use that song to POST.
-  const songs = useSelector((state) => state.songs.songs);
+  const currentPlaying = useSelector((state) => state.songs.currentPlaying);
+  const dispatch = useDispatch();
+  const auth = getAuth();
+  const user = auth.currentUser;
+  const thirtySecondsMs = 30000;
+
+  const fetchCurrentPlayingSong = () => {
+    fetchCurrentPlayingSongThunk(//access_token here
+    );
+  };
 
   useEffect(() => {
-    dispatch(fetchAllSongsThunk());
+    if (user) {
+      let interval = setInterval(() => {
+        fetchCurrentPlayingSong();
+      }, thirtySecondsMs);
+      return () => {
+        clearInterval(interval);
+      };
+    }
   }, []);
 
   useEffect(() => {
-    let interval = setInterval(() => {
-      console.log(songs);
-      if (songs === null) {
-        return;
-      }
-      console.log("running");
-      const localAuth = true; // TODO: Get logged in auth from context (firebase)
-      if (localAuth) {
-        const spotifyAuth = true; // TODO: Get spotify logged in auth from context (firebase)
-        if (spotifyAuth) {
-          const mockSong = {
-            title: "Song Name",
-            artist: "Artist Name",
-            image_url: "example.png",
-            external_url: "sample.link",
+    if (currentPlaying) {
+      const mockUserId = 1;
+      navigator.geolocation.getCurrentPosition(
+        // Success callback
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          const playback = {
+            user_id: mockUserId,
+            song_id: currentPlaying.song_id,
+            latitude: latitude,
+            longitude: longitude,
           };
-          const mockUserId = 1;
-          if (mockSong) {
-            const song = songs.find((song) => {
-              return (
-                song.title === mockSong.title && song.artist === mockSong.artist
-              );
-            });
-            console.log(songs);
-            console.log(song);
-            // All validation should be on backend
-            if (!song) {
-              dispatch(addSongThunk(mockSong));
-            }
-
-            // Getting coordinates
-            navigator.geolocation.getCurrentPosition(
-              // Success callback
-              (position) => {
-                const { latitude, longitude } = position.coords;
-                const song = songs.find((song) => {
-                  return (
-                    song.title === mockSong.title &&
-                    song.artist === mockSong.artist
-                  );
-                });
-                console.log("before post", position);
-                console.log(position);
-                const playback = {
-                  user_id: mockUserId,
-                  song_id: song.song_id,
-                  latitude: latitude,
-                  longitude: longitude,
-                };
-                console.log("POSTING PLAYBACK:", playback);
-                dispatch(createPlaybackThunk(playback));
-              },
-              // Error callback
-              (error) => {
-                console.error("Error getting location:", error.message);
-              }
-            );
-          }
+          console.log("POSTING PLAYBACK:", playback);
+          dispatch(createPlaybackThunk(playback));
+        },
+        // Error callback
+        (error) => {
+          console.error("Error getting location:", error.message);
         }
-      }
-    }, thirySecondsMs);
-    return () => {
-      clearInterval(interval);
-    };
-  }, [songs]);
+      );
+    }
+  }, [currentPlaying]);
+
   */
-
-  /**
-   * Commented out tests
-   */
-  // const dispatch = useDispatch();
-  // const {item} = useSelector(state => state.songs.currentPlaying);
-
-  // const fetchCurrentPlayingSong = () => {
-  //   dispatch(
-  //     fetchCurrentPlayingSongThunk(
-  //       `access token` // insert access token
-  //     )
-  //   );
-  // }
-
-  // useEffect(() => {
-  // }, [item]);
 
   return (
     // <div className="App">
