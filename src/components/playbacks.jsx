@@ -64,13 +64,13 @@ const Playbacks = ({ playbacks }) => {
           external_url,
           preview_url,
           image_url,
-          latitude,
-          longitude,
+          // latitude,
+          // longitude,
         } = playback;
         return {
           position: {
-            lat: parseFloat(latitude),
-            lng: parseFloat(longitude),
+            lat: parseFloat(currentLatitude),
+            lng: parseFloat(currentLongitude),
           },
           icon: {
             // Add your custom marker icon here

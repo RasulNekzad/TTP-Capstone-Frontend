@@ -46,14 +46,15 @@ export const fetchCurrentPlayingSong = (payload) => ({
   payload,
 });
 
-export const fetchCurrentPlayingSongThunk = (access_token) => {
+export const fetchCurrentPlayingSongThunk = (userUID) => {
   return async (dispatch) => {
     try {
+      console.log(userUID)
       const response = await axios.get(
-        `http://localhost:8080/api/song/currently-playing?access_token=${access_token}`
+        `http://localhost:8080/api/song/currently-playing?user_id=${userUID}`
       );
       console.log("SPOTIFY API CALL CURRENT PLAYING SONG =>", response.data);
-      dispatch(fetchCurrentPlayingSong(response.data));
+      dispatch(fetchCurrentPlayingSong([response.data]));
     } catch (error) {
       console.error(error);
     }
