@@ -18,6 +18,7 @@ function UserProfile() {
     const user = auth.currentUser;
 
     useEffect(() => {
+        console.log(user)
         if (user) {
             retrieveUserHandler();
         }
@@ -82,7 +83,7 @@ function UserProfile() {
                     <hr className="divider"/>
                     <div className="profile__spotify">
                         <h1 className="spotify__text">Want to share what you're listening to with the world?</h1>
-                        <button type="button" onClick={linkSpotifyHandler} className="button">
+                        <button type="button" onClick={linkSpotifyHandler} className="spotify__button">
                             <img className="button__logo" src={spotifyLogo} alt="spotify icon"/>
                             <span className="button__text">Connect To Spotify</span>
                         </button>
