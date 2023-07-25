@@ -78,23 +78,19 @@ const AuthForm = ({spotifyOAuth, onSpotifyAuthClick}) => {
                 const token = credential.accessToken;
                 // The signed-in user info.
                 const user = result.user;
+                console.log(user)
                 // IdP data available using getAdditionalUserInfo(result)
                 // ...
                 await axios.post(`http://localhost:8080/api/user/`, {
-                    userId: user.uid,
-                    name: user.displayName,
+                    user_id: user.uid,
+                    display_name: user.displayName,
                     email: user.email
                 });
                 navigate('/');
             }).catch((error) => {
             // Handle Errors here.
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            // The email of the user's account used.
-            const email = error.customData.email;
-            // The AuthCredential type that was used.
-            const credential = GoogleAuthProvider.credentialFromError(error);
-            // ...
+            console.log(error); 
+            // const credential = GoogleAuthProvider.credentialFromError(error.data.error);
         });
     }
     const spotifyAuthHandler = () => {

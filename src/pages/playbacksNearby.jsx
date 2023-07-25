@@ -23,6 +23,7 @@ const PlaybacksNearby = () => {
   const fetchActivePlaybacks = () => {
     return dispatch(fetchActivePlaybacksThunk());
   };
+
   useEffect(() => {
     fetchActivePlaybacks();
   }, []);
