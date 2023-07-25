@@ -1,5 +1,10 @@
 import { fetchCurrentPlayingSongThunk } from "../redux/songs/songs.actions";
-import { createPlaybackThunk } from "../redux/playbacks/playbacks.actions";
+import {
+  fetchAllPlaybacksThunk,
+  fetchPersonalPlaybackThunk,
+  createPlaybackThunk,
+  updatePlaybackStateBySongId,
+} from "../redux/playbacks/playbacks.actions";
 import { useDispatch, useSelector } from "react-redux";
 // import { Button } from "react-bootstrap";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -25,8 +30,7 @@ function App() {
   const thirtySecondsMs = 30000;
 
   const fetchCurrentPlayingSong = () => {
-    fetchCurrentPlayingSongThunk(//access_token here
-    );
+    fetchCurrentPlayingSongThunk(); //access_token here
   };
 
   useEffect(() => {
@@ -41,14 +45,14 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (currentPlaying) {
-      const mockUserId = 1;
+    if (currentPlaying && user) {
+      const user_id = user.uid;
       navigator.geolocation.getCurrentPosition(
         // Success callback
         (position) => {
           const { latitude, longitude } = position.coords;
           const playback = {
-            user_id: mockUserId,
+            user_id: user_id,
             song_id: currentPlaying.song_id,
             latitude: latitude,
             longitude: longitude,
@@ -63,7 +67,6 @@ function App() {
       );
     }
   }, [currentPlaying]);
-
   */
 
   return (
