@@ -112,3 +112,19 @@ export const fetchActivePlaybacksThunk = () => {
     }
   };
 };
+
+export const removeActivePlaybacksForUser = (payload) => ({
+  type: PlaybacksActionType.REMOVE_ACTIVE_PLAYBACKS_FOR_USER,
+  payload,
+});
+
+export const removeActivePlaybacksForUserThunk = (userId) => {
+  return async (dispatch) => {
+    try {
+      await axios.delete(`http://localhost:8080/api/active-playback/${userId}`);
+      dispatch(removeActivePlaybacksForUser(userId));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+};
