@@ -94,3 +94,21 @@ export const fetchPlaybackStateThunk = (access_token) => {
     }
   };
 };
+
+export const fetchActivePlaybacks = (payload) => ({
+  type: PlaybacksActionType.FETCH_ACTIVE_PLAYBACKS,
+  payload,
+});
+
+export const fetchActivePlaybacksThunk = () => {
+  return async (dispatch) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/api/active-playback/`
+      );
+      dispatch(fetchActivePlaybacks(response.data.content));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+};
