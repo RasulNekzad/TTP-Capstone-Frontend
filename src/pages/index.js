@@ -3,10 +3,7 @@ import { Button } from "react-bootstrap";
 import React, { useEffect } from "react";
 import img from "../assets/man_listening_headphones.png";
 import backgroundImg from "../assets/spotify_background.png";
-import { refreshToken } from "../redux/user/user.actions";
-import { fetchCurrentPlayingSongThunk } from "../redux/songs/songs.actions";
-import { useDispatch } from "react-redux";
-import { fetchPlaybackStateThunk } from "../redux/playbacks/playbacks.actions";
+import { getAuth } from "@firebase/auth";
 
 function Home() {
   const getParamsFromSpotifyAuth = (hash) => {
@@ -20,28 +17,17 @@ function Home() {
     }, {});
     return params;
   };
-  const dispatch = useDispatch();
+  const auth = getAuth();
+  const user = auth.currentUser;
+  if(user) console.log(user.uid);
 
   useEffect(() => {
     /**
-     * Extracting access token and refresh token
+     * Extracting params
      */
     if (window.location.hash) {
-      const { access_token, refresh_token } = getParamsFromSpotifyAuth(
-        window.location.hash
-      );
-      console.log("Token", { access_token, refresh_token });
-      // add to db or firebase
-
-      // fetch current playing song test
-      //   dispatch(fetchCurrentPlayingSongThunk(access_token));
-
-      //fetch playback_state test
-      dispatch(fetchPlaybackStateThunk(access_token));
-      // refresh token test
-      //   refreshToken(refresh_token).then(({ access_token }) => {
-      //     console.log("new access_token", access_token);
-      //   });
+      const params = getParamsFromSpotifyAuth(window.location.hash);
+      console.log("Params", params);
     }
   });
 
@@ -78,7 +64,11 @@ function Home() {
             <br /> at a time.
           </h6>
           <div className="header__button--2">
-            <Button variant="dark">Learn More</Button>
+            <Button
+              variant="dark"
+            >
+              Learn More
+            </Button>
           </div>
         </div>
         <div className="header__col--3">
