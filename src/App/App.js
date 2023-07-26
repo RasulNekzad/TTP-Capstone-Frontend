@@ -15,28 +15,65 @@ import User from "../pages/user";
 import UserProfile from "../components/user/UserProfile";
 import PlaybacksNearby from "../pages/playbacksNearby";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useEffect } from "react";
 import PlaybacksHistory from "../pages/playbacksHistory";
-import { getAuth } from "firebase/auth";
-import {
-  fetchUpdatedAtThunk,
-  refreshTokenThunk,
-} from "../redux/user/user.actions";
+import Footer from "../components/layout/Footer";
 
 function App() {
-  /* Populating the db with currently playing song every 30 seconds
-  //  * Will require access token from spotify
+    /* Populating the db with currently playing song every 30 seconds
+     * Will require access token from spotify
 
-  const currentPlaying = useSelector((state) => state.songs.currentPlaying);
-  const dispatch = useDispatch();
-  const auth = getAuth();
-  const user = auth.currentUser;
-  const thirtySecondsMs = 30000;
+    const currentPlaying = useSelector((state) => state.songs.currentPlaying);
+    const dispatch = useDispatch();
+    const auth = getAuth();
+    const user = auth.currentUser;
+    const thirtySecondsMs = 30000;
 
-  const fetchCurrentPlayingSong = () => {
-    fetchCurrentPlayingSongThunk(); //access_token here
+    const fetchCurrentPlayingSong = () => {
+      fetchCurrentPlayingSongThunk(); //access_token here
+    };
+    
+    const handleUserLeave = () => {
+      if (user) {
+        dispatch(removeActivePlaybacksForUserThunk(user.uid));
+      }
   };
 
+    useEffect(() => 
+     if (user) {
+      let interval = setInterval(() => {
+        fetchCurrentPlayingSong();
+      }, thirtySecondsMs);
+      window.addEventListener("beforeunload", handleUserLeave);
+      return () => {
+        clearInterval(interval);
+        window.removeEventListener("beforeunload", handleUserLeave);
+      };
+    }, []);
+
+    useEffect(() => {
+      if (currentPlaying && user) {
+        const user_id = user.uid;
+        navigator.geolocation.getCurrentPosition(
+          // Success callback
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            const playback = {
+              user_id: user_id,
+              song_id: currentPlaying.song_id,
+              latitude: latitude,
+              longitude: longitude,
+            };
+            console.log("POSTING PLAYBACK:", playback);
+            dispatch(createPlaybackThunk(playback));
+          },
+          // Error callback
+          (error) => {
+            console.error("Error getting location:", error.message);
+          }
+        );
+      }
+    }, [currentPlaying]);
+    */
   const handleUserLeave = () => {
     if (user) {
       dispatch(removeActivePlaybacksForUserThunk(user.uid));
@@ -81,7 +118,6 @@ function App() {
       );
     }
   }, [currentPlaying]);
-  // */
 
   const updatedAt = useSelector((state) => state.user.updatedAt);
   const auth = getAuth();
@@ -115,23 +151,24 @@ function App() {
     }
   };
 
-  return (
-    // <div className="App">
-    //   {/* <Button onClick={fetchCurrentPlayingSong}>fetchCurrentPlayingSong</Button>
-    //   {item ? <h1>{item.name}</h1> : <h1>Loading</h1>} */}
-    // </div>
-    <Router>
-      <TopNavbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Auth />} />
-        <Route path="/user" element={<UserProfile />} />
-        <Route path="/user/:id" element={<User />} />
-        <Route path="/songs" element={<PlaybacksNearby />} />
-        <Route path="/history" element={<PlaybacksHistory />} />
-      </Routes>
-    </Router>
-  );
+    return (
+        // <div className="App">
+        //   {/* <Button onClick={fetchCurrentPlayingSong}>fetchCurrentPlayingSong</Button>
+        //   {item ? <h1>{item.name}</h1> : <h1>Loading</h1>} */}
+        // </div>
+        <Router>
+            <TopNavbar/>
+            <Routes>
+                <Route path="/" element={<Home/>}/>
+                <Route path="/login" element={<Auth/>}/>
+                <Route path="/user" element={<UserProfile/>}/>
+                <Route path="/user/:id" element={<User/>}/>
+                <Route path="/songs" element={<PlaybacksNearby/>}/>
+                <Route path="/history" element={<PlaybacksHistory/>}/>
+            </Routes>
+            <Footer/>
+        </Router>
+    );
 }
 
 export default App;
