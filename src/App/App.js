@@ -3,7 +3,7 @@ import {
   fetchAllPlaybacksThunk,
   fetchPersonalPlaybackThunk,
   createPlaybackThunk,
-  updatePlaybackStateBySongId,
+  removeActivePlaybacksForUserThunk,
 } from "../redux/playbacks/playbacks.actions";
 import { useDispatch, useSelector } from "react-redux";
 // import { Button } from "react-bootstrap";
@@ -21,7 +21,7 @@ import { getAuth } from "firebase/auth";
 
 function App() {
   /* Populating the db with currently playing song every 30 seconds
-   * Will require access token from spotify
+  //  * Will require access token from spotify
 
   const currentPlaying = useSelector((state) => state.songs.currentPlaying);
   const dispatch = useDispatch();
@@ -33,13 +33,23 @@ function App() {
     fetchCurrentPlayingSongThunk(); //access_token here
   };
 
+  const handleUserLeave = () => {
+    if (user) {
+      dispatch(removeActivePlaybacksForUserThunk(user.uid));
+    }
+  };
+
   useEffect(() => {
     if (user) {
       let interval = setInterval(() => {
         fetchCurrentPlayingSong();
       }, thirtySecondsMs);
+
+      window.addEventListener("beforeunload", handleUserLeave);
+
       return () => {
         clearInterval(interval);
+        window.removeEventListener("beforeunload", handleUserLeave);
       };
     }
   }, []);
@@ -67,7 +77,7 @@ function App() {
       );
     }
   }, [currentPlaying]);
-  */
+  // */
 
   return (
     // <div className="App">
