@@ -18,6 +18,10 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useEffect } from "react";
 import PlaybacksHistory from "../pages/playbacksHistory";
 import { getAuth } from "firebase/auth";
+import {
+  fetchUpdatedAtThunk,
+  refreshTokenThunk,
+} from "../redux/user/user.actions";
 
 function App() {
   // Populating the db with currently playing song every 30 seconds
@@ -78,6 +82,38 @@ function App() {
   //   }
   // }, [currentPlaying]);
   // */
+
+  const updatedAt = useSelector((state) => state.user.updatedAt);
+  const auth = getAuth();
+  const user = auth.currentUser;
+  const dispatch = useDispatch();
+  console.log(updatedAt);
+
+  useEffect(() => {
+    if (user) {
+      dispatch(fetchUpdatedAtThunk(user.uid));
+    }
+  });
+
+  useEffect(() => {
+    // Schedule the token refresh task every 50 minutes (3000000 milliseconds)
+    const refreshTokenTask = setInterval(checkTokenRefresh, 3000000);
+
+    // Clean up the interval when the component unmounts
+    return () => clearInterval(refreshTokenTask);
+  }, []);
+
+  // Function to check if the token needs to be refreshed
+  const checkTokenRefresh = async () => {
+    const now = Date.now();
+    const expiresIn = 3600 * 1000; // 3600 seconds = 1 hour
+    const timeDiff = now - updatedAt;
+
+    if (timeDiff >= expiresIn && user) {
+      refreshTokenThunk(user.uid);
+      console.log("Token refreshed for the user.");
+    }
+  };
 
   return (
     // <div className="App">
