@@ -20,63 +20,63 @@ import PlaybacksHistory from "../pages/playbacksHistory";
 import { getAuth } from "firebase/auth";
 
 function App() {
-  /* Populating the db with currently playing song every 30 seconds
-  //  * Will require access token from spotify
+  // Populating the db with currently playing song every 30 seconds
+  // Will require access token from spotify
 
-  const currentPlaying = useSelector((state) => state.songs.currentPlaying);
-  const dispatch = useDispatch();
-  const auth = getAuth();
-  const user = auth.currentUser;
-  const thirtySecondsMs = 30000;
+  // const currentPlaying = useSelector((state) => state.songs.currentPlaying);
+  // const dispatch = useDispatch();
+  // const auth = getAuth();
+  // const user = auth.currentUser;
+  // const thirtySecondsMs = 30000;
 
-  const fetchCurrentPlayingSong = () => {
-    fetchCurrentPlayingSongThunk(); //access_token here
-  };
+  // const fetchCurrentPlayingSong = () => {
+  //   fetchCurrentPlayingSongThunk(); //access_token here
+  // };
 
-  const handleUserLeave = () => {
-    if (user) {
-      dispatch(removeActivePlaybacksForUserThunk(user.uid));
-    }
-  };
+  // const handleUserLeave = () => {
+  //   if (user) {
+  //     dispatch(removeActivePlaybacksForUserThunk(user.uid));
+  //   }
+  // };
 
-  useEffect(() => {
-    if (user) {
-      let interval = setInterval(() => {
-        fetchCurrentPlayingSong();
-      }, thirtySecondsMs);
+  // useEffect(() => {
+  //   if (user) {
+  //     let interval = setInterval(() => {
+  //       fetchCurrentPlayingSong();
+  //     }, thirtySecondsMs);
 
-      window.addEventListener("beforeunload", handleUserLeave);
+  //     window.addEventListener("beforeunload", handleUserLeave);
 
-      return () => {
-        clearInterval(interval);
-        window.removeEventListener("beforeunload", handleUserLeave);
-      };
-    }
-  }, []);
+  //     return () => {
+  //       clearInterval(interval);
+  //       window.removeEventListener("beforeunload", handleUserLeave);
+  //     };
+  //   }
+  // }, []);
 
-  useEffect(() => {
-    if (currentPlaying && user) {
-      const user_id = user.uid;
-      navigator.geolocation.getCurrentPosition(
-        // Success callback
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          const playback = {
-            user_id: user_id,
-            song_id: currentPlaying.song_id,
-            latitude: latitude,
-            longitude: longitude,
-          };
-          console.log("POSTING PLAYBACK:", playback);
-          dispatch(createPlaybackThunk(playback));
-        },
-        // Error callback
-        (error) => {
-          console.error("Error getting location:", error.message);
-        }
-      );
-    }
-  }, [currentPlaying]);
+  // useEffect(() => {
+  //   if (currentPlaying && user) {
+  //     const user_id = user.uid;
+  //     navigator.geolocation.getCurrentPosition(
+  //       // Success callback
+  //       (position) => {
+  //         const { latitude, longitude } = position.coords;
+  //         const playback = {
+  //           user_id: user_id,
+  //           song_id: currentPlaying.song_id,
+  //           latitude: latitude,
+  //           longitude: longitude,
+  //         };
+  //         console.log("POSTING PLAYBACK:", playback);
+  //         dispatch(createPlaybackThunk(playback));
+  //       },
+  //       // Error callback
+  //       (error) => {
+  //         console.error("Error getting location:", error.message);
+  //       }
+  //     );
+  //   }
+  // }, [currentPlaying]);
   // */
 
   return (
