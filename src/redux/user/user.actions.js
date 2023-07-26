@@ -6,6 +6,7 @@ import user from "../../components/userProfile";
 export const fetchUserProfile = (payload) => {
   console.log("FETCH USER PROFILE ACTION");
   return {
+    payload: payload,
     type: UserActionType.FETCHING_USER_PROFILE,
     payload,
   };
@@ -26,7 +27,7 @@ export const fetchUserProfileThunk = (userId) => {
       const response = await axios.get(
         `${process.env.REACT_APP_API_URL}/api/user/${userId}`
       );
-      console.log("FETCHUSERPROFILETHUNK COMPLETED", response.data);
+      console.log("FETCHUSERPROFILETHUNK COMPLETED TO =>", response.data);
       dispatch(fetchUserProfile(response.data));
     } catch (error) {
       console.error(error);
