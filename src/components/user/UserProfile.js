@@ -126,8 +126,6 @@ function UserProfile() {
                 <span>Close Account</span>
               </button>
             </div>
-          </div>
-        </div>
       </ProtectedRoute>
     );
 }
