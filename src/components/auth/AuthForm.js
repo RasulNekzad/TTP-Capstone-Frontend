@@ -16,6 +16,7 @@ import {Alert} from "react-bootstrap";
 import AuthContext from "../../context/AuthProviderContext";
 import axios from "axios";
 import ProtectedRoute from "../protectedroute";
+import useDocumentTitle from "../useDocumentTitle";
 
 const AuthForm = ({spotifyOAuth, onSpotifyAuthClick}) => {
     const provider = new GoogleAuthProvider();
@@ -28,6 +29,8 @@ const AuthForm = ({spotifyOAuth, onSpotifyAuthClick}) => {
     const nameInputRef = useRef()
     const emailInputRef = useRef();
     const passwordInputRef = useRef();
+
+    useDocumentTitle(authType ? "Login - Spotify Proximity" : "Register - Spotify Proximity");
 
     const authTypeHandler = type => e => {
         setError('');

@@ -5,6 +5,7 @@ import {
   Marker,
   InfoWindow,
 } from "@react-google-maps/api";
+import useDocumentTitle from "./useDocumentTitle";
 
 const Playbacks = ({ playbacks }) => {
   const [currentLatitude, setCurrentLatitude] = useState(0);
@@ -12,6 +13,8 @@ const Playbacks = ({ playbacks }) => {
   const [map, setMap] = useState(null);
   const [markers, setMarkers] = useState([]);
   const [selectedTrack, setSelectedTrack] = useState(null);
+
+  useDocumentTitle("Songs - Spotify Proximity");
 
   const success = (position) => {
     const { latitude, longitude } = position.coords;
