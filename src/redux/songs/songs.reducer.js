@@ -3,7 +3,7 @@ import SongsActionType from "./songs.types";
 export const INITIAL_SONGS_STATE = {
   songs: [],
   song: {},
-  currentPlaying: [],
+  currentPlaying: null,
 };
 
 const songsReducer = (state = INITIAL_SONGS_STATE, action) => {

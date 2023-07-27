@@ -14,36 +14,24 @@ function Home() {
         const stringAfterHashtag = hash.substring(1);
         const paramsInUrl = stringAfterHashtag.split("&");
         const params = paramsInUrl.reduce((accumulater, currentValue) => {
-            console.log(currentValue);
-            const [key, value] = currentValue.split("=");
-            accumulater[key] = value;
-            return accumulater;
+          console.log(currentValue);
+          const [key, value] = currentValue.split("=");
+          accumulater[key] = value;
+          return accumulater;
         }, {});
         return params;
-    };
-    const dispatch = useDispatch();
+      };
+    const auth = getAuth();
+    const user = auth.currentUser;
 
     useEffect(() => {
-        /**
-         * Extracting access token and refresh token
-         */
-        if (window.location.hash) {
-            const {access_token, refresh_token} = getParamsFromSpotifyAuth(
-                window.location.hash
-            );
-            console.log("Token", {access_token, refresh_token});
-            // add to db or firebase
-
-            // fetch current playing song test
-            //   dispatch(fetchCurrentPlayingSongThunk(access_token));
-
-            //fetch playback_state test
-            dispatch(fetchPlaybackStateThunk(access_token));
-            // refresh token test
-            //   refreshToken(refresh_token).then(({ access_token }) => {
-            //     console.log("new access_token", access_token);
-            //   });
-        }
+      /**
+       * Extracting params
+       */
+      if (window.location.hash) {
+        const params = getParamsFromSpotifyAuth(window.location.hash);
+        console.log("Params", params);
+      }
     });
 
     return (

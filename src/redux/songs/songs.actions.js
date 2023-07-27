@@ -54,7 +54,7 @@ export const fetchCurrentPlayingSongThunk = (userUID) => {
         `http://localhost:8080/api/song/currently-playing?user_id=${userUID}`
       );
       console.log("SPOTIFY API CALL CURRENT PLAYING SONG =>", response.data);
-      dispatch(fetchCurrentPlayingSong([response.data]));
+      dispatch(fetchCurrentPlayingSong(response.data));
     } catch (error) {
       console.error(error);
     }
