@@ -31,7 +31,7 @@ function TopNavbar() {
     }
 
     return (
-        <Navbar expand="lg" className="bg-body-tertiary">
+        <Navbar sticky="top" expand="lg" className="bg-body-tertiary">
             <Navbar.Brand href="/" className={`${navCollapse ? 'brand' : 'brand-padding'}`}>Spotify
                 Proximity</Navbar.Brand>
             <Navbar.Toggle id="basic-navbar-toggle" aria-controls="basic-navbar-nav"/>
