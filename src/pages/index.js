@@ -19,7 +19,6 @@ function Home() {
   };
   const auth = getAuth();
   const user = auth.currentUser;
-  if(user) console.log(user.uid);
 
   useEffect(() => {
     /**

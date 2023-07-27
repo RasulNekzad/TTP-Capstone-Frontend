@@ -1,7 +1,5 @@
 import { fetchCurrentPlayingSongThunk } from "../redux/songs/songs.actions";
 import {
-  fetchAllPlaybacksThunk,
-  fetchPersonalPlaybackThunk,
   createPlaybackThunk,
   removeActivePlaybacksForUserThunk,
 } from "../redux/playbacks/playbacks.actions";
@@ -15,7 +13,7 @@ import User from "../pages/user";
 import UserProfile from "../components/user/UserProfile";
 import PlaybacksNearby from "../pages/playbacksNearby";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import PlaybacksHistory from "../pages/playbacksHistory";
 import { getAuth } from "firebase/auth";
 import {
@@ -24,43 +22,70 @@ import {
 } from "../redux/user/user.actions";
 
 function App() {
-  /* Populating the db with currently playing song every 30 seconds
-  //  * Will require access token from spotify
-
+  //  Populating the db with currently playing song every 30 seconds
   const currentPlaying = useSelector((state) => state.songs.currentPlaying);
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const userUID = useSelector((state) => state.auth.token);
   const dispatch = useDispatch();
   const auth = getAuth();
   const user = auth.currentUser;
   const thirtySecondsMs = 30000;
+  const updatedAt = useSelector((state) => state.user.updatedAt);
+  const [intervalId, setIntervalId] = useState(null);
 
-  const fetchCurrentPlayingSong = () => {
-    fetchCurrentPlayingSongThunk(); //access_token here
+  const fetchCurrentPlayingSong = (userUID) => {
+    console.log("FETCH CURRENT PLAYING SONG");
+    dispatch(fetchCurrentPlayingSongThunk(userUID));
   };
 
   const handleUserLeave = () => {
-    if (user) {
+    if (user && isLoggedIn) {
       dispatch(removeActivePlaybacksForUserThunk(user.uid));
     }
   };
 
+  // useEffect(() => {
+  //   if (isLoggedIn) {
+  //     let interval = setInterval(() => {
+  //       console.log("test1");
+  //       fetchCurrentPlayingSong(userUID);
+  //     }, thirtySecondsMs);
+
+  //     window.addEventListener("beforeunload", handleUserLeave);
+
+  //     return () => {
+  //       clearInterval(interval);
+  //       window.removeEventListener("beforeunload", handleUserLeave);
+  //     };
+  //   }
+  // }, [isLoggedIn]);
+
   useEffect(() => {
-    if (user) {
-      let interval = setInterval(() => {
-        fetchCurrentPlayingSong();
-      }, thirtySecondsMs);
-
-      window.addEventListener("beforeunload", handleUserLeave);
-
-      return () => {
-        clearInterval(interval);
-        window.removeEventListener("beforeunload", handleUserLeave);
-      };
+    // Execute the fetch and post function immediately when the component mounts
+    if (isLoggedIn) {
+      fetchCurrentPlayingSong(userUID);
     }
-  }, []);
+
+    // Set up an interval to fetch and post every 5 minutes
+    const interval = setInterval(() => {
+      if (isLoggedIn) {
+        fetchCurrentPlayingSong(userUID);
+      }
+    }, 5 * 1000); // 5 seconds in milliseconds
+
+    // Save the interval ID for cleanup
+    setIntervalId(interval);
+
+    // Clean up the interval when the component unmounts
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [isLoggedIn, userUID]);
 
   useEffect(() => {
-    if (currentPlaying && user) {
+    if (currentPlaying && isLoggedIn) {
       const user_id = user.uid;
+      console.log("currentPlaying", currentPlaying);
       navigator.geolocation.getCurrentPosition(
         // Success callback
         (position) => {
@@ -80,20 +105,13 @@ function App() {
         }
       );
     }
-  }, [currentPlaying]);
-  // */
-
-  const updatedAt = useSelector((state) => state.user.updatedAt);
-  const auth = getAuth();
-  const user = auth.currentUser;
-  const dispatch = useDispatch();
-  console.log(updatedAt);
+  }, [currentPlaying, isLoggedIn]);
 
   useEffect(() => {
-    if (user) {
-      dispatch(fetchUpdatedAtThunk(user.uid));
+    if (isLoggedIn) {
+      dispatch(fetchUpdatedAtThunk(userUID));
     }
-  });
+  }, [isLoggedIn, userUID]);
 
   useEffect(() => {
     // Schedule the token refresh task every 50 minutes (3000000 milliseconds)
