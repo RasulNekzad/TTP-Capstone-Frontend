@@ -4,12 +4,16 @@ import './TopNavbar.css';
 import {Link, useNavigate} from "react-router-dom";
 import {useContext, useEffect, useState} from "react";
 import AuthContext from "../../context/AuthProviderContext";
+import { useDispatch, useSelector } from 'react-redux';
+import { removeActivePlaybacksForUserThunk } from '../../redux/playbacks/playbacks.actions';
 
 function TopNavbar() {
     // checks if the screen size is less than 992px, in which case the navbar will collapse
     const [navCollapse, setNavCollapse] = useState(false);
     const navigate = useNavigate();
     const {isLoggedIn, logout} = useContext(AuthContext);
+    const userUID = useSelector((state) => state.auth.token);
+    const dispatch = useDispatch();
 
     useEffect(() => {
         const handleResize = () => {
@@ -26,6 +30,7 @@ function TopNavbar() {
     }, []);
 
     const handleLogout = () => {
+        dispatch(removeActivePlaybacksForUserThunk(userUID));
         logout();
         navigate('/');
     }

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import {
   GoogleMap,
   LoadScript,
@@ -12,6 +13,7 @@ const Playbacks = ({ playbacks }) => {
   const [map, setMap] = useState(null);
   const [markers, setMarkers] = useState([]);
   const [selectedTrack, setSelectedTrack] = useState(null);
+  const currentPlaying = useSelector((state) => state.songs.currentPlaying);
 
   const success = (position) => {
     const { latitude, longitude } = position.coords;
@@ -86,7 +88,7 @@ const Playbacks = ({ playbacks }) => {
       });
       setMarkers(newMarkers);
     }
-  }, [map, playbacks]);
+  }, [map, playbacks, currentPlaying]);
 
   const onLoad = (map) => {
     setMap(map);

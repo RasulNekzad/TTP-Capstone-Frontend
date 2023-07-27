@@ -1,8 +1,10 @@
-import { fetchCurrentPlayingSongThunk } from "../redux/songs/songs.actions";
 import {
-  fetchAllPlaybacksThunk,
-  fetchPersonalPlaybackThunk,
+  fetchCurrentPlayingSongThunk,
+  resetCurrentPlayingSongThunk,
+} from "../redux/songs/songs.actions";
+import {
   createPlaybackThunk,
+  fetchPlaybackStateThunk,
   removeActivePlaybacksForUserThunk,
 } from "../redux/playbacks/playbacks.actions";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,88 +17,98 @@ import User from "../pages/user";
 import UserProfile from "../components/user/UserProfile";
 import PlaybacksNearby from "../pages/playbacksNearby";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { useEffect, useState } from "react";
 import PlaybacksHistory from "../pages/playbacksHistory";
 import Footer from "../components/layout/Footer";
 
 function App() {
-    /* Populating the db with currently playing song every 30 seconds
-     * Will require access token from spotify
+  //  Populating the db with currently playing song every 30 seconds
+  const currentPlaying = useSelector((state) => state.songs.currentPlaying);
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const userUID = useSelector((state) => state.auth.token);
+  const playback_state = useSelector((state) => state.playbacks.playback_state);
+  const dispatch = useDispatch();
+  const auth = getAuth();
+  const user = auth.currentUser;
+  const thirtySecondsMs = 30000;
+  const updatedAt = useSelector((state) => state.user.updatedAt);
+  const [intervalId, setIntervalId] = useState(null);
 
-    const currentPlaying = useSelector((state) => state.songs.currentPlaying);
-    const dispatch = useDispatch();
-    const auth = getAuth();
-    const user = auth.currentUser;
-    const thirtySecondsMs = 30000;
+  console.log(isLoggedIn);
 
-    const fetchCurrentPlayingSong = () => {
-      fetchCurrentPlayingSongThunk(); //access_token here
-    };
-    
-    const handleUserLeave = () => {
-      if (user) {
-        dispatch(removeActivePlaybacksForUserThunk(user.uid));
-      }
+  const fetchCurrentPlayingSong = (userUID) => {
+    dispatch(fetchCurrentPlayingSongThunk(userUID));
   };
 
-    useEffect(() => 
-     if (user) {
-      let interval = setInterval(() => {
-        fetchCurrentPlayingSong();
-      }, thirtySecondsMs);
-      window.addEventListener("beforeunload", handleUserLeave);
-      return () => {
-        clearInterval(interval);
-        window.removeEventListener("beforeunload", handleUserLeave);
-      };
-    }, []);
-
-    useEffect(() => {
-      if (currentPlaying && user) {
-        const user_id = user.uid;
-        navigator.geolocation.getCurrentPosition(
-          // Success callback
-          (position) => {
-            const { latitude, longitude } = position.coords;
-            const playback = {
-              user_id: user_id,
-              song_id: currentPlaying.song_id,
-              latitude: latitude,
-              longitude: longitude,
-            };
-            console.log("POSTING PLAYBACK:", playback);
-            dispatch(createPlaybackThunk(playback));
-          },
-          // Error callback
-          (error) => {
-            console.error("Error getting location:", error.message);
-          }
-        );
-      }
-    }, [currentPlaying]);
-    */
   const handleUserLeave = () => {
-    if (user) {
-      dispatch(removeActivePlaybacksForUserThunk(user.uid));
+    if (user && isLoggedIn) {
+      dispatch(removeActivePlaybacksForUserThunk(userUID));
     }
   };
 
-  useEffect(() => {
-    if (user) {
-      let interval = setInterval(() => {
-        fetchCurrentPlayingSong();
-      }, thirtySecondsMs);
+  const fetchPlaybackState = (userUID) => {
+    dispatch(fetchPlaybackStateThunk(userUID));
+  };
 
-      window.addEventListener("beforeunload", handleUserLeave);
+  const resetCurrentPlayingSong = () => {
+    dispatch(resetCurrentPlayingSongThunk());
+  };
 
-      return () => {
-        clearInterval(interval);
-        window.removeEventListener("beforeunload", handleUserLeave);
-      };
-    }
+  useEffect(() => 
+   if (user) {
+    let interval = setInterval(() => {
+      fetchCurrentPlayingSong();
+    }, thirtySecondsMs);
+    window.addEventListener("beforeunload", handleUserLeave);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("beforeunload", handleUserLeave);
+    };
   }, []);
 
   useEffect(() => {
-    if (currentPlaying && user) {
+    // Execute the fetch and post function immediately when the component mounts
+    if (isLoggedIn) {
+      // Fetch whether user is playing song after logged in
+      fetchPlaybackState(userUID);
+      // Fetch current playing song if user is playing song
+      // Else reset currentPlaying and remove active playbacks
+      if (playback_state) {
+        fetchCurrentPlayingSong(userUID);
+      } else {
+          if (currentPlaying) {
+            dispatch(removeActivePlaybacksForUserThunk(userUID));
+            resetCurrentPlayingSong();
+          }
+      }
+    }
+
+    // Set up an interval to fetch and post every 5 minutes
+    const interval = setInterval(() => {
+      if (isLoggedIn) {
+        fetchPlaybackState(userUID);
+        if (playback_state) {
+          fetchCurrentPlayingSong(userUID);
+        } else {
+          if (currentPlaying) {
+            dispatch(removeActivePlaybacksForUserThunk(userUID));
+            resetCurrentPlayingSong();
+          }
+        }
+      }
+    }, 2 * 1000); // 5 seconds in milliseconds
+
+    // Save the interval ID for cleanup
+    setIntervalId(interval);
+
+    // Clean up the interval when the component unmounts
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [isLoggedIn, userUID, playback_state]);
+
+  useEffect(() => {
+    if (currentPlaying && isLoggedIn && playback_state) {
       const user_id = user.uid;
       navigator.geolocation.getCurrentPosition(
         // Success callback
@@ -117,19 +129,13 @@ function App() {
         }
       );
     }
-  }, [currentPlaying]);
-
-  const updatedAt = useSelector((state) => state.user.updatedAt);
-  const auth = getAuth();
-  const user = auth.currentUser;
-  const dispatch = useDispatch();
-  console.log(updatedAt);
+  }, [currentPlaying, isLoggedIn]);
 
   useEffect(() => {
-    if (user) {
-      dispatch(fetchUpdatedAtThunk(user.uid));
+    if (isLoggedIn) {
+      dispatch(fetchUpdatedAtThunk(userUID));
     }
-  });
+  }, [isLoggedIn, userUID]);
 
   useEffect(() => {
     // Schedule the token refresh task every 50 minutes (3000000 milliseconds)
@@ -137,7 +143,7 @@ function App() {
 
     // Clean up the interval when the component unmounts
     return () => clearInterval(refreshTokenTask);
-  }, []);
+  }, [isLoggedIn, userUID]);
 
   // Function to check if the token needs to be refreshed
   const checkTokenRefresh = async () => {
@@ -151,24 +157,20 @@ function App() {
     }
   };
 
-    return (
-        // <div className="App">
-        //   {/* <Button onClick={fetchCurrentPlayingSong}>fetchCurrentPlayingSong</Button>
-        //   {item ? <h1>{item.name}</h1> : <h1>Loading</h1>} */}
-        // </div>
-        <Router>
-            <TopNavbar/>
-            <Routes>
-                <Route path="/" element={<Home/>}/>
-                <Route path="/login" element={<Auth/>}/>
-                <Route path="/user" element={<UserProfile/>}/>
-                <Route path="/user/:id" element={<User/>}/>
-                <Route path="/songs" element={<PlaybacksNearby/>}/>
-                <Route path="/history" element={<PlaybacksHistory/>}/>
-            </Routes>
-            <Footer/>
-        </Router>
-    );
+  return (
+      <Router>
+          <TopNavbar/>
+          <Routes>
+              <Route path="/" element={<Home/>}/>
+              <Route path="/login" element={<Auth/>}/>
+              <Route path="/user" element={<UserProfile/>}/>
+              <Route path="/user/:id" element={<User/>}/>
+              <Route path="/songs" element={<PlaybacksNearby/>}/>
+              <Route path="/history" element={<PlaybacksHistory/>}/>
+          </Routes>
+          <Footer/>
+      </Router>
+  );
 }
 
 export default App;

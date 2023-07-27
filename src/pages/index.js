@@ -10,18 +10,19 @@ import {useDispatch} from "react-redux";
 import {fetchPlaybackStateThunk} from "../redux/playbacks/playbacks.actions";
 
 function Home() {
-    const getParamsFromSpotifyAuth = (hash) => {
-        const stringAfterHashtag = hash.substring(1);
-        const paramsInUrl = stringAfterHashtag.split("&");
-        const params = paramsInUrl.reduce((accumulater, currentValue) => {
-            console.log(currentValue);
-            const [key, value] = currentValue.split("=");
-            accumulater[key] = value;
-            return accumulater;
-        }, {});
-        return params;
-    };
-    const dispatch = useDispatch();
+  const getParamsFromSpotifyAuth = (hash) => {
+    const stringAfterHashtag = hash.substring(1);
+    const paramsInUrl = stringAfterHashtag.split("&");
+    const params = paramsInUrl.reduce((accumulater, currentValue) => {
+      console.log(currentValue);
+      const [key, value] = currentValue.split("=");
+      accumulater[key] = value;
+      return accumulater;
+    }, {});
+    return params;
+  };
+  const auth = getAuth();
+  const user = auth.currentUser;
 
     useEffect(() => {
         /**

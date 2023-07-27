@@ -15,9 +15,7 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <Provider store={store}>
         <AuthContextProvider>
-            <React.StrictMode>
                 <App/>
-            </React.StrictMode>
         </AuthContextProvider>
     </Provider>
 );
