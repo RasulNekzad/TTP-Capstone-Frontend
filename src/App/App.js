@@ -1,6 +1,10 @@
-import { fetchCurrentPlayingSongThunk } from "../redux/songs/songs.actions";
+import {
+  fetchCurrentPlayingSongThunk,
+  resetCurrentPlayingSongThunk,
+} from "../redux/songs/songs.actions";
 import {
   createPlaybackThunk,
+  fetchPlaybackStateThunk,
   removeActivePlaybacksForUserThunk,
 } from "../redux/playbacks/playbacks.actions";
 import { useDispatch, useSelector } from "react-redux";
@@ -26,6 +30,7 @@ function App() {
   const currentPlaying = useSelector((state) => state.songs.currentPlaying);
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const userUID = useSelector((state) => state.auth.token);
+  const playback_state = useSelector((state) => state.playbacks.playback_state);
   const dispatch = useDispatch();
   const auth = getAuth();
   const user = auth.currentUser;
@@ -33,45 +38,57 @@ function App() {
   const updatedAt = useSelector((state) => state.user.updatedAt);
   const [intervalId, setIntervalId] = useState(null);
 
+  console.log(isLoggedIn);
+
   const fetchCurrentPlayingSong = (userUID) => {
-    console.log("FETCH CURRENT PLAYING SONG");
     dispatch(fetchCurrentPlayingSongThunk(userUID));
   };
 
-  const handleUserLeave = () => {
-    if (user && isLoggedIn) {
-      dispatch(removeActivePlaybacksForUserThunk(user.uid));
-    }
+  // const handleUserLeave = () => {
+  //   if (user && isLoggedIn) {
+  //     dispatch(removeActivePlaybacksForUserThunk(user.uid));
+  //   }
+  // };
+
+  const fetchPlaybackState = (userUID) => {
+    dispatch(fetchPlaybackStateThunk(userUID));
   };
 
-  // useEffect(() => {
-  //   if (isLoggedIn) {
-  //     let interval = setInterval(() => {
-  //       console.log("test1");
-  //       fetchCurrentPlayingSong(userUID);
-  //     }, thirtySecondsMs);
-
-  //     window.addEventListener("beforeunload", handleUserLeave);
-
-  //     return () => {
-  //       clearInterval(interval);
-  //       window.removeEventListener("beforeunload", handleUserLeave);
-  //     };
-  //   }
-  // }, [isLoggedIn]);
+  const resetCurrentPlayingSong = () => {
+    dispatch(resetCurrentPlayingSongThunk());
+  };
 
   useEffect(() => {
     // Execute the fetch and post function immediately when the component mounts
     if (isLoggedIn) {
-      fetchCurrentPlayingSong(userUID);
+      // Fetch whether user is playing song after logged in
+      fetchPlaybackState(userUID);
+      // Fetch current playing song if user is playing song
+      // Else reset currentPlaying and remove active playbacks
+      if (playback_state) {
+        fetchCurrentPlayingSong(userUID);
+      } else {
+          if (currentPlaying) {
+            dispatch(removeActivePlaybacksForUserThunk(userUID));
+            resetCurrentPlayingSong();
+          }
+      }
     }
 
     // Set up an interval to fetch and post every 5 minutes
     const interval = setInterval(() => {
       if (isLoggedIn) {
-        fetchCurrentPlayingSong(userUID);
+        fetchPlaybackState(userUID);
+        if (playback_state) {
+          fetchCurrentPlayingSong(userUID);
+        } else {
+          if (currentPlaying) {
+            dispatch(removeActivePlaybacksForUserThunk(userUID));
+            resetCurrentPlayingSong();
+          }
+        }
       }
-    }, 5 * 1000); // 5 seconds in milliseconds
+    }, 2 * 1000); // 5 seconds in milliseconds
 
     // Save the interval ID for cleanup
     setIntervalId(interval);
@@ -80,12 +97,11 @@ function App() {
     return () => {
       clearInterval(intervalId);
     };
-  }, [isLoggedIn, userUID]);
+  }, [isLoggedIn, userUID, playback_state]);
 
   useEffect(() => {
-    if (currentPlaying && isLoggedIn) {
+    if (currentPlaying && isLoggedIn && playback_state) {
       const user_id = user.uid;
-      console.log("currentPlaying", currentPlaying);
       navigator.geolocation.getCurrentPosition(
         // Success callback
         (position) => {
@@ -119,7 +135,7 @@ function App() {
 
     // Clean up the interval when the component unmounts
     return () => clearInterval(refreshTokenTask);
-  }, []);
+  }, [isLoggedIn, userUID]);
 
   // Function to check if the token needs to be refreshed
   const checkTokenRefresh = async () => {
@@ -134,10 +150,6 @@ function App() {
   };
 
   return (
-    // <div className="App">
-    //   {/* <Button onClick={fetchCurrentPlayingSong}>fetchCurrentPlayingSong</Button>
-    //   {item ? <h1>{item.name}</h1> : <h1>Loading</h1>} */}
-    // </div>
     <Router>
       <TopNavbar />
       <Routes>

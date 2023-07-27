@@ -1,5 +1,6 @@
 import axios from "axios";
 import SongsActionType from "./songs.types";
+import { async } from "q";
 
 export const fetchAllSongs = (payload) => ({
   type: SongsActionType.FETCH_ALL_SONGS,
@@ -40,6 +41,21 @@ export const fetchSongThunk = (accessToken, songId) => {
     }
   };
 };
+
+export const resetCurrentPlayingSong = () => ({
+    type: SongsActionType.RESET_CURRENT_PLAYING_SONG,
+})
+
+export const resetCurrentPlayingSongThunk = () => {
+    return async (dispatch) => {
+        try {
+            console.log("RESET CURRENTLY PLAYING SONG");
+            dispatch(resetCurrentPlayingSong());
+        } catch (error) {
+            console.error(error);
+        }
+    }
+}
 
 export const fetchCurrentPlayingSong = (payload) => ({
   type: SongsActionType.FETCH_CURRENT_PLAYING_SONG,
