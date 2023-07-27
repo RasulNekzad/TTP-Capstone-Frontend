@@ -19,11 +19,7 @@ import PlaybacksNearby from "../pages/playbacksNearby";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useEffect, useState } from "react";
 import PlaybacksHistory from "../pages/playbacksHistory";
-import { getAuth } from "firebase/auth";
-import {
-  fetchUpdatedAtThunk,
-  refreshTokenThunk,
-} from "../redux/user/user.actions";
+import Footer from "../components/layout/Footer";
 
 function App() {
   //  Populating the db with currently playing song every 30 seconds
@@ -44,11 +40,11 @@ function App() {
     dispatch(fetchCurrentPlayingSongThunk(userUID));
   };
 
-  // const handleUserLeave = () => {
-  //   if (user && isLoggedIn) {
-  //     dispatch(removeActivePlaybacksForUserThunk(user.uid));
-  //   }
-  // };
+  const handleUserLeave = () => {
+    if (user && isLoggedIn) {
+      dispatch(removeActivePlaybacksForUserThunk(userUID));
+    }
+  };
 
   const fetchPlaybackState = (userUID) => {
     dispatch(fetchPlaybackStateThunk(userUID));
@@ -57,6 +53,18 @@ function App() {
   const resetCurrentPlayingSong = () => {
     dispatch(resetCurrentPlayingSongThunk());
   };
+
+  useEffect(() => 
+   if (user) {
+    let interval = setInterval(() => {
+      fetchCurrentPlayingSong();
+    }, thirtySecondsMs);
+    window.addEventListener("beforeunload", handleUserLeave);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("beforeunload", handleUserLeave);
+    };
+  }, []);
 
   useEffect(() => {
     // Execute the fetch and post function immediately when the component mounts
@@ -150,17 +158,18 @@ function App() {
   };
 
   return (
-    <Router>
-      <TopNavbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Auth />} />
-        <Route path="/user" element={<UserProfile />} />
-        <Route path="/user/:id" element={<User />} />
-        <Route path="/songs" element={<PlaybacksNearby />} />
-        <Route path="/history" element={<PlaybacksHistory />} />
-      </Routes>
-    </Router>
+      <Router>
+          <TopNavbar/>
+          <Routes>
+              <Route path="/" element={<Home/>}/>
+              <Route path="/login" element={<Auth/>}/>
+              <Route path="/user" element={<UserProfile/>}/>
+              <Route path="/user/:id" element={<User/>}/>
+              <Route path="/songs" element={<PlaybacksNearby/>}/>
+              <Route path="/history" element={<PlaybacksHistory/>}/>
+          </Routes>
+          <Footer/>
+      </Router>
   );
 }
 
