@@ -15,11 +15,7 @@ import PlaybacksNearby from "../pages/playbacksNearby";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useEffect, useState } from "react";
 import PlaybacksHistory from "../pages/playbacksHistory";
-import { getAuth } from "firebase/auth";
-import {
-  fetchUpdatedAtThunk,
-  refreshTokenThunk,
-} from "../redux/user/user.actions";
+import Footer from "../components/layout/Footer";
 
 function App() {
   //  Populating the db with currently playing song every 30 seconds
@@ -37,12 +33,49 @@ function App() {
     console.log("FETCH CURRENT PLAYING SONG");
     dispatch(fetchCurrentPlayingSongThunk(userUID));
   };
-
+  
   const handleUserLeave = () => {
     if (user && isLoggedIn) {
       dispatch(removeActivePlaybacksForUserThunk(user.uid));
     }
   };
+
+    useEffect(() => 
+     if (user) {
+      let interval = setInterval(() => {
+        fetchCurrentPlayingSong();
+      }, thirtySecondsMs);
+      window.addEventListener("beforeunload", handleUserLeave);
+      return () => {
+        clearInterval(interval);
+        window.removeEventListener("beforeunload", handleUserLeave);
+      };
+    }, []);
+
+    useEffect(() => {
+      if (currentPlaying && user) {
+        const user_id = user.uid;
+        navigator.geolocation.getCurrentPosition(
+          // Success callback
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            const playback = {
+              user_id: user_id,
+              song_id: currentPlaying.song_id,
+              latitude: latitude,
+              longitude: longitude,
+            };
+            console.log("POSTING PLAYBACK:", playback);
+            dispatch(createPlaybackThunk(playback));
+          },
+          // Error callback
+          (error) => {
+            console.error("Error getting location:", error.message);
+          }
+        );
+      }
+    }, [currentPlaying]);
+    */
 
   // useEffect(() => {
   //   if (isLoggedIn) {
@@ -133,23 +166,24 @@ function App() {
     }
   };
 
-  return (
-    // <div className="App">
-    //   {/* <Button onClick={fetchCurrentPlayingSong}>fetchCurrentPlayingSong</Button>
-    //   {item ? <h1>{item.name}</h1> : <h1>Loading</h1>} */}
-    // </div>
-    <Router>
-      <TopNavbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Auth />} />
-        <Route path="/user" element={<UserProfile />} />
-        <Route path="/user/:id" element={<User />} />
-        <Route path="/songs" element={<PlaybacksNearby />} />
-        <Route path="/history" element={<PlaybacksHistory />} />
-      </Routes>
-    </Router>
-  );
+    return (
+        // <div className="App">
+        //   {/* <Button onClick={fetchCurrentPlayingSong}>fetchCurrentPlayingSong</Button>
+        //   {item ? <h1>{item.name}</h1> : <h1>Loading</h1>} */}
+        // </div>
+        <Router>
+            <TopNavbar/>
+            <Routes>
+                <Route path="/" element={<Home/>}/>
+                <Route path="/login" element={<Auth/>}/>
+                <Route path="/user" element={<UserProfile/>}/>
+                <Route path="/user/:id" element={<User/>}/>
+                <Route path="/songs" element={<PlaybacksNearby/>}/>
+                <Route path="/history" element={<PlaybacksHistory/>}/>
+            </Routes>
+            <Footer/>
+        </Router>
+    );
 }
 
 export default App;
