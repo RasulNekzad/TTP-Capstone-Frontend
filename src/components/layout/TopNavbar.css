@@ -1,6 +1,8 @@
 .bg-body-tertiary {
     min-height: 7vh;
     padding-bottom: .5rem !important;
+    background-color: #F0F0F0 !important;
+    border-bottom: 2px solid black;
 }
 
 #basic-navbar-toggle {

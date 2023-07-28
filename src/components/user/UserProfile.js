@@ -6,6 +6,7 @@ import {getAuth, updatePassword, deleteUser} from "firebase/auth";
 import {fetchSpotifyOAuthThunk, fetchUserProfileThunk} from "../../redux/user/user.actions";
 import {useDispatch, useSelector} from "react-redux";
 import ProtectedRoute from "../protectedroute";
+import useDocumentTitle from "../useDocumentTitle";
 
 function UserProfile() {
     const navigate = useNavigate();
@@ -17,6 +18,8 @@ function UserProfile() {
 
     const auth = getAuth();
     const user = auth.currentUser;
+
+    useDocumentTitle("Profile - Spotify Proximity");
 
     useEffect(() => {
         if (user && user.uid) {
@@ -98,36 +101,6 @@ function UserProfile() {
                     </div>
                 </div>
             </div>
-            <hr className="divider" />
-            <div className="profile__spotify">
-              <h1 className="spotify__text">
-                Want to share what you're listening to with the world?
-              </h1>
-                <button
-                  type="button"
-                  onClick={linkSpotifyHandler}
-                  className="spotify__button"
-                >
-                  <img
-                    className="button__logo"
-                    src={spotifyLogo}
-                    alt="spotify icon"
-                  />
-                  <span className="button__text">Connect To Spotify</span>
-                </button>
-            </div>
-            <hr className="divider" />
-            <div>
-              <button
-                onClick={deleteAccountHandler}
-                type="button"
-                className="delete__button"
-              >
-                <span>Close Account</span>
-              </button>
-            </div>
-          </div>
-        </div>
       </ProtectedRoute>
     );
 }

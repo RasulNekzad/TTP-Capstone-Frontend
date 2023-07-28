@@ -8,6 +8,7 @@ import musicalNote from "../assets/musical_notes.png";
 import spotify_2 from "../assets/spotify_2.png";
 import {useDispatch} from "react-redux";
 import {fetchPlaybackStateThunk} from "../redux/playbacks/playbacks.actions";
+import useDocumentTitle from "../components/useDocumentTitle";
 
 function Home() {
     const getParamsFromSpotifyAuth = (hash) => {
@@ -22,6 +23,8 @@ function Home() {
         return params;
     };
     const dispatch = useDispatch();
+
+    useDocumentTitle("Spotify Proximity");
 
     useEffect(() => {
         /**
