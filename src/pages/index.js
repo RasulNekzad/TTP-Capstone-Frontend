@@ -9,6 +9,7 @@ import spotify_2 from "../assets/spotify_2.png";
 import {useDispatch} from "react-redux";
 import {fetchPlaybackStateThunk} from "../redux/playbacks/playbacks.actions";
 import useDocumentTitle from "../components/useDocumentTitle";
+import AuthContext from "../context/AuthProviderContext";
 
 function Home() {
   const getParamsFromSpotifyAuth = (hash) => {
@@ -42,7 +43,7 @@ function Home() {
           <div className="header__text">Spotify Proximity</div>
           <h6>Ever wondered what music people around you are listening to?</h6>
           <div className="header__button">
-            <Button href="/songs" variant="dark">
+            <Button href="/map" variant="dark">
               Get Started!
             </Button>
           </div>

@@ -8,6 +8,7 @@ import Playbacks from "../components/playbacks";
 import ToggleButton from "../components/toggleButton/ToggleButton";
 import "../components/toggleButton/ToggleButton.css";
 import { getAuth } from "firebase/auth";
+import useDocumentTitle from "../components/useDocumentTitle";
 
 const PlaybacksHistory = () => {
   const playbacksGlobal = useSelector((state) => state.playbacks.playbacks);
@@ -22,6 +23,8 @@ const PlaybacksHistory = () => {
   console.log("Global: ", playbacksGlobal);
   console.log("Personal: ", playbacksPersonal);
 
+  useDocumentTitle("History - Spotify Proximity");
+
   const fetchAllPlaybacks = () => {
     return dispatch(fetchAllPlaybacksThunk());
   };
@@ -32,9 +35,6 @@ const PlaybacksHistory = () => {
 
   useEffect(() => {
     fetchAllPlaybacks();
-
-    // Check if the user is authenticated
-    // Verification of registration by getAuth() or isLoggedIn state?
     const auth = getAuth();
     const user = auth.currentUser;
     if (user && isLoggedIn) {
@@ -42,7 +42,7 @@ const PlaybacksHistory = () => {
       console.log(userUID);
       fetchPersonalPlaybacks();
     }
-  }, []);
+  }, [isLoggedIn, userUID]);
 
   // Function to toggle between global and personal playbacks
   const togglePlaybackView = () => {
