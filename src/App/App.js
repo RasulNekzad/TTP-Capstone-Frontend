@@ -8,7 +8,6 @@ import {
   removeActivePlaybacksForUserThunk,
 } from "../redux/playbacks/playbacks.actions";
 import { useDispatch, useSelector } from "react-redux";
-// import { Button } from "react-bootstrap";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "../pages";
 import Auth from "../pages/auth";
@@ -24,6 +23,7 @@ import {
   fetchUpdatedAtThunk,
   refreshTokenThunk,
 } from "../redux/user/user.actions";
+import Footer from "../components/layout/Footer";
 
 function App() {
   //  Populating the db with currently playing song every 30 seconds
@@ -38,7 +38,8 @@ function App() {
   const updatedAt = useSelector((state) => state.user.updatedAt);
   const [intervalId, setIntervalId] = useState(null);
   const [playbackIntervalId, setPlaybackIntervalId] = useState(null);
-  const [removeplaybackIntervalId, setRemovePlaybackIntervalId] = useState(null);
+  const [removeplaybackIntervalId, setRemovePlaybackIntervalId] =
+    useState(null);
   const [playbackStateIntervalId, setPlaybackStateIntervalId] = useState(null);
 
   console.log("Logged In: ", isLoggedIn);
@@ -129,7 +130,7 @@ function App() {
     if (isLoggedIn && playback_state) {
       fetchCurrentPlayingSong(userUID);
     } else {
-      if(currentPlaying) resetCurrentPlayingSong();
+      if (currentPlaying) resetCurrentPlayingSong();
     }
   }, [playback_state, isLoggedIn, userUID]);
 
@@ -160,7 +161,7 @@ function App() {
     if (isLoggedIn && !playback_state) {
       const removeplaybackInterval = setInterval(() => {
         dispatch(removeActivePlaybacksForUserThunk(userUID));
-      }, 2 * 1000); 
+      }, 2 * 1000);
 
       setRemovePlaybackIntervalId(removeplaybackInterval);
 
@@ -204,7 +205,7 @@ function App() {
     if (isLoggedIn) {
       const updatedAtInterval = setInterval(() => {
         dispatch(fetchUpdatedAtThunk(userUID));
-      }, 2 * 1000); 
+      }, 2 * 1000);
 
       return () => {
         clearInterval(updatedAtInterval);
@@ -243,6 +244,7 @@ function App() {
         <Route path="/songs" element={<PlaybacksNearby />} />
         <Route path="/history" element={<PlaybacksHistory />} />
       </Routes>
+      <Footer />
     </Router>
   );
 }
