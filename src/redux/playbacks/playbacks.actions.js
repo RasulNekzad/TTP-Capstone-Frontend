@@ -125,7 +125,7 @@ export const removeActivePlaybacksForUserThunk = (userId) => {
   return async (dispatch) => {
     try {
       await axios.delete(
-        `${${process.env.REACT_APP_API_URL}}active-playback/${userId}`
+        `${process.env.REACT_APP_API_URL}active-playback/${userId}`
       );
       dispatch(removeActivePlaybacksForUser(userId));
     } catch (error) {
