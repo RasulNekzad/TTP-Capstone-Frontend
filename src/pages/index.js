@@ -43,7 +43,7 @@ function Home() {
           <div className="header__text">Spotify Proximity</div>
           <h6>Ever wondered what music people around you are listening to?</h6>
           <div className="header__button">
-            <Button href="/songs" variant="dark">
+            <Button href="/map" variant="dark">
               Get Started!
             </Button>
           </div>

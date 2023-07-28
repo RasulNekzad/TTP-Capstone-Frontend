@@ -1,14 +1,14 @@
-import React, {useEffect, useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
-    fetchAllPlaybacksThunk,
-    fetchPersonalPlaybackThunk,
+  fetchAllPlaybacksThunk,
+  fetchPersonalPlaybackThunk,
 } from "../redux/playbacks/playbacks.actions";
 import Playbacks from "../components/playbacks";
 import ToggleButton from "../components/toggleButton/ToggleButton";
 import "../components/toggleButton/ToggleButton.css";
 import { getAuth } from "firebase/auth";
-import { is } from "@babel/types";
+import useDocumentTitle from "../components/useDocumentTitle";
 
 const PlaybacksHistory = () => {
   const playbacksGlobal = useSelector((state) => state.playbacks.playbacks);
@@ -19,22 +19,22 @@ const PlaybacksHistory = () => {
   const userUID = useSelector((state) => state.auth.token);
   const [showPersonalPlaybacks, setShowPersonalPlaybacks] = useState(false);
 
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
+  console.log("Global: ", playbacksGlobal);
+  console.log("Personal: ", playbacksPersonal);
 
-    useDocumentTitle("History - Spotify Proximity");
+  useDocumentTitle("History - Spotify Proximity");
+
+  const fetchAllPlaybacks = () => {
+    return dispatch(fetchAllPlaybacksThunk());
+  };
 
   const fetchPersonalPlaybacks = () => {
     return dispatch(fetchPersonalPlaybackThunk(userUID));
   };
 
-    const fetchPersonalPlaybacks = (user_id) => {
-        return dispatch(fetchPersonalPlaybackThunk(user_id));
-    };
-
-    useEffect(() => {
-        fetchAllPlaybacks();
-    // Check if the user is authenticated
-    // Verification of registration by getAuth() or isLoggedIn state?
+  useEffect(() => {
+    fetchAllPlaybacks();
     const auth = getAuth();
     const user = auth.currentUser;
     if (user && isLoggedIn) {
@@ -44,24 +44,10 @@ const PlaybacksHistory = () => {
     }
   }, [isLoggedIn, userUID]);
 
-        // Check if the user is authenticated
-        // Verification of registration by getAuth() or isLoggedIn state?
-        const auth = getAuth();
-        const user = auth.currentUser;
-        if (user) {
-            // If the user is logged in, fetch personal playbacks
-            const user_id = 1; // mock id for now
-            // Fetch user from db by user_id or email?
-            // Association between user in firebase and postgres?
-            // Or only use one of the two?
-            fetchPersonalPlaybacks(user_id);
-        }
-    }, []);
-
-    // Function to toggle between global and personal playbacks
-    const togglePlaybackView = () => {
-        setShowPersonalPlaybacks(!showPersonalPlaybacks);
-    };
+  // Function to toggle between global and personal playbacks
+  const togglePlaybackView = () => {
+    setShowPersonalPlaybacks(!showPersonalPlaybacks);
+  };
 
   return (
     <div className="text-center">
