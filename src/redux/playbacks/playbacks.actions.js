@@ -11,7 +11,9 @@ export const fetchAllPlaybacks = (payload) => ({
 export const fetchAllPlaybacksThunk = () => {
   return async (dispatch) => {
     try {
-      const response = await axios.get(`http://localhost:8080/api/playback/`);
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}playback/`
+      );
       console.log("THUNK API CALL ALL PLAYBACKS =>", response.data.content);
       dispatch(fetchAllPlaybacks(response.data.content));
     } catch (error) {
@@ -29,7 +31,7 @@ export const fetchPlaybackThunk = (songId, userId) => {
   return async (dispatch) => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/playback/${userId}/${songId}`
+        `${process.env.REACT_APP_API_URL}playback/${userId}/${songId}`
       );
       console.log("THUNK API CALL PLAYBACK", response.data);
       dispatch(fetchPlayback(response.data));
@@ -48,7 +50,7 @@ export const createPlaybackThunk = (newPlayback) => {
   return async (dispatch) => {
     try {
       const response = await axios.post(
-        `http://localhost:8080/api/playback/`,
+        `${process.env.REACT_APP_API_URL}playback/`,
         newPlayback
       );
       dispatch(createPlayback(response.data));
@@ -67,7 +69,7 @@ export const fetchPersonalPlaybackThunk = (userId) => {
   return async (dispatch) => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/playback/${userId}`
+        `${process.env.REACT_APP_API_URL}playback/${userId}`
       );
       console.log("THUNK API CALL PERSONAL PLAYBACK =>", response.data.content);
       dispatch(fetchPersonalPlayback(response.data.content));
@@ -86,7 +88,7 @@ export const fetchPlaybackStateThunk = (user_id) => {
   return async (dispatch) => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/song/playback-state?user_id=${user_id}`
+        `${process.env.REACT_APP_API_URL}song/playback-state?user_id=${user_id}`
       );
       console.log("THUNK API CALL PLAYBACK STATE =>", response.data);
       dispatch(fetchPlaybackState(response.data));
@@ -105,7 +107,7 @@ export const fetchActivePlaybacksThunk = () => {
   return async (dispatch) => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/active-playback/`
+        `${process.env.REACT_APP_API_URL}active-playback/`
       );
       dispatch(fetchActivePlaybacks(response.data.content));
     } catch (error) {
@@ -122,7 +124,9 @@ export const removeActivePlaybacksForUser = (payload) => ({
 export const removeActivePlaybacksForUserThunk = (userId) => {
   return async (dispatch) => {
     try {
-      await axios.delete(`http://localhost:8080/api/active-playback/${userId}`);
+      await axios.delete(
+        `${process.env.REACT_APP_API_URL}active-playback/${userId}`
+      );
       dispatch(removeActivePlaybacksForUser(userId));
     } catch (error) {
       console.error(error);

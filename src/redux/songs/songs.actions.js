@@ -10,7 +10,7 @@ export const fetchAllSongs = (payload) => ({
 export const fetchAllSongsThunk = () => {
   return async (dispatch) => {
     try {
-      const response = await axios.get(`http://localhost:8080/api/song/`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}song/`);
       dispatch(fetchAllSongs(response.data));
     } catch (error) {
       console.error(error);
@@ -43,19 +43,19 @@ export const fetchSongThunk = (accessToken, songId) => {
 };
 
 export const resetCurrentPlayingSong = () => ({
-    type: SongsActionType.RESET_CURRENT_PLAYING_SONG,
-})
+  type: SongsActionType.RESET_CURRENT_PLAYING_SONG,
+});
 
 export const resetCurrentPlayingSongThunk = () => {
-    return async (dispatch) => {
-        try {
-            console.log("RESET CURRENTLY PLAYING SONG");
-            dispatch(resetCurrentPlayingSong());
-        } catch (error) {
-            console.error(error);
-        }
+  return async (dispatch) => {
+    try {
+      console.log("RESET CURRENTLY PLAYING SONG");
+      dispatch(resetCurrentPlayingSong());
+    } catch (error) {
+      console.error(error);
     }
-}
+  };
+};
 
 export const fetchCurrentPlayingSong = (payload) => ({
   type: SongsActionType.FETCH_CURRENT_PLAYING_SONG,
@@ -65,9 +65,9 @@ export const fetchCurrentPlayingSong = (payload) => ({
 export const fetchCurrentPlayingSongThunk = (userUID) => {
   return async (dispatch) => {
     try {
-      console.log(userUID)
+      console.log(userUID);
       const response = await axios.get(
-        `http://localhost:8080/api/song/currently-playing?user_id=${userUID}`
+        `${process.env.REACT_APP_API_URL}song/currently-playing?user_id=${userUID}`
       );
       console.log("SPOTIFY API CALL CURRENT PLAYING SONG =>", response.data);
       dispatch(fetchCurrentPlayingSong(response.data));
@@ -95,7 +95,7 @@ export const addSongThunk = (song) => {
   return async (dispatch) => {
     try {
       const response = await axios.post(
-        `http://localhost:8080/api/song/`,
+        `${process.env.REACT_APP_API_URL}song/`,
         song
       );
       console.log("API CALL ADD SONG =>", response.data);
