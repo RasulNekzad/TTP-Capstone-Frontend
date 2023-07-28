@@ -212,25 +212,25 @@ function App() {
       };
     }
   }, [isLoggedIn, userUID, playback_state, dispatch]);
-
+  
   useEffect(() => {
     // Schedule the token refresh task every 50 minutes (3000000 milliseconds)
     const refreshTokenTask = setInterval(checkTokenRefresh, 3000000);
-
+    
     // Clean up the interval when the component unmounts
     return () => clearInterval(refreshTokenTask);
   }, [isLoggedIn, userUID]);
 
   // Function to check if the token needs to be refreshed
   const checkTokenRefresh = async () => {
-    const now = Date.now();
-    const expiresIn = 3600 * 1000; // 3600 seconds = 1 hour
-    const timeDiff = now - updatedAt;
+      const now = Date.now();
+      const expiresIn = 3600 * 1000; // 3600 seconds = 1 hour
+      const timeDiff = now - updatedAt;
 
-    if (timeDiff >= expiresIn && user) {
-      refreshTokenThunk(user.uid);
-      console.log("Token refreshed for the user.");
-    }
+      if (timeDiff >= expiresIn && user) {
+          refreshTokenThunk(userUID);
+          console.log("Token refreshed for the user.");
+      }
   };
 
   return (
