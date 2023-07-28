@@ -8,7 +8,6 @@ import Playbacks from "../components/playbacks";
 import ToggleButton from "../components/toggleButton/ToggleButton";
 import "../components/toggleButton/ToggleButton.css";
 import { getAuth } from "firebase/auth";
-import { is } from "@babel/types";
 
 const PlaybacksHistory = () => {
   const playbacksGlobal = useSelector((state) => state.playbacks.playbacks);
@@ -20,6 +19,8 @@ const PlaybacksHistory = () => {
   const [showPersonalPlaybacks, setShowPersonalPlaybacks] = useState(false);
 
   const dispatch = useDispatch();
+  console.log("Global: ", playbacksGlobal);
+  console.log("Personal: ", playbacksPersonal);
 
   const fetchAllPlaybacks = () => {
     return dispatch(fetchAllPlaybacksThunk());
@@ -41,7 +42,7 @@ const PlaybacksHistory = () => {
       console.log(userUID);
       fetchPersonalPlaybacks();
     }
-  }, [isLoggedIn, userUID]);
+  }, []);
 
   // Function to toggle between global and personal playbacks
   const togglePlaybackView = () => {
