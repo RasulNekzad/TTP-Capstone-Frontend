@@ -85,7 +85,6 @@ export const fetchPlaybackState = (payload) => ({
 export const fetchPlaybackStateThunk = (user_id) => {
   return async (dispatch) => {
     try {
-      console.log(user_id);
       const response = await axios.get(
         `http://localhost:8080/api/song/playback-state?user_id=${user_id}`
       );

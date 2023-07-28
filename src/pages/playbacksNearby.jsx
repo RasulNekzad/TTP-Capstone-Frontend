@@ -18,7 +18,7 @@ const PlaybacksNearby = () => {
 
   useEffect(() => {
     fetchActivePlaybacks();
-  }, [playback_state]);
+  }, [playback_state, playbacksNearby]);
 
   return (
     <div className="text-center">

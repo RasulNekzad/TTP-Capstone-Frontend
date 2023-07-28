@@ -37,8 +37,12 @@ function App() {
   const thirtySecondsMs = 30000;
   const updatedAt = useSelector((state) => state.user.updatedAt);
   const [intervalId, setIntervalId] = useState(null);
+  const [playbackIntervalId, setPlaybackIntervalId] = useState(null);
+  const [removeplaybackIntervalId, setRemovePlaybackIntervalId] = useState(null);
+  const [playbackStateIntervalId, setPlaybackStateIntervalId] = useState(null);
 
-  console.log(isLoggedIn);
+  console.log("Logged In: ", isLoggedIn);
+  console.log("Current Playing: ", currentPlaying);
 
   const fetchCurrentPlayingSong = (userUID) => {
     dispatch(fetchCurrentPlayingSongThunk(userUID));
@@ -58,50 +62,117 @@ function App() {
     dispatch(resetCurrentPlayingSongThunk());
   };
 
+  // useEffect(() => {
+  //   // Execute the fetch and post function immediately when the component mounts
+  //   if (isLoggedIn) {
+  //     // Fetch whether user is playing song after logged in
+  //     fetchPlaybackState(userUID);
+  //     // Fetch current playing song if user is playing song
+  //     // Else reset currentPlaying and remove active playbacks
+  //     if (playback_state) {
+  //       fetchCurrentPlayingSong(userUID);
+  //     } else {
+  //         if (currentPlaying) {
+  //           resetCurrentPlayingSong();
+  //           dispatch(removeActivePlaybacksForUserThunk(userUID));
+  //         }
+  //     }
+  //   }
+
+  //   // Set up an interval to fetch and post every 5 minutes
+  //   const interval = setInterval(() => {
+  //     if (isLoggedIn) {
+  //       fetchPlaybackState(userUID);
+  //       if (playback_state) {
+  //         fetchCurrentPlayingSong(userUID);
+  //       } else {
+  //         if (currentPlaying) {
+  //           resetCurrentPlayingSong();
+  //           dispatch(removeActivePlaybacksForUserThunk(userUID));
+  //         }
+  //       }
+  //     }
+  //   }, 2 * 1000); // 5 seconds in milliseconds
+
+  //   // Save the interval ID for cleanup
+  //   setIntervalId(interval);
+
+  //   // Clean up the interval when the component unmounts
+  //   return () => {
+  //     clearInterval(intervalId);
+  //   };
+  // }, [isLoggedIn, userUID, playback_state]);
+  // Fetch playback state when the component mounts and when playback_state changes
   useEffect(() => {
-    // Execute the fetch and post function immediately when the component mounts
     if (isLoggedIn) {
-      // Fetch whether user is playing song after logged in
       fetchPlaybackState(userUID);
-      // Fetch current playing song if user is playing song
-      // Else reset currentPlaying and remove active playbacks
-      if (playback_state) {
-        fetchCurrentPlayingSong(userUID);
-      } else {
-          if (currentPlaying) {
-            dispatch(removeActivePlaybacksForUserThunk(userUID));
-            resetCurrentPlayingSong();
-          }
-      }
     }
+  }, [isLoggedIn, userUID]);
 
-    // Set up an interval to fetch and post every 5 minutes
-    const interval = setInterval(() => {
-      if (isLoggedIn) {
+  // Set up an interval to fetch the playback state every 2 seconds
+  useEffect(() => {
+    if (isLoggedIn) {
+      const playbackStateInterval = setInterval(() => {
         fetchPlaybackState(userUID);
-        if (playback_state) {
-          fetchCurrentPlayingSong(userUID);
-        } else {
-          if (currentPlaying) {
-            dispatch(removeActivePlaybacksForUserThunk(userUID));
-            resetCurrentPlayingSong();
-          }
-        }
-      }
-    }, 2 * 1000); // 5 seconds in milliseconds
+      }, 2 * 1000); // 2 seconds in milliseconds
 
-    // Save the interval ID for cleanup
-    setIntervalId(interval);
+      setPlaybackStateIntervalId(playbackStateInterval);
 
-    // Clean up the interval when the component unmounts
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [isLoggedIn, userUID, playback_state]);
+      return () => {
+        clearInterval(playbackStateInterval);
+      };
+    }
+  }, [isLoggedIn, userUID]);
+
+  // Fetch current playing song when playback_state changes or when the component mounts
+  useEffect(() => {
+    if (isLoggedIn && playback_state) {
+      fetchCurrentPlayingSong(userUID);
+    } else {
+      if(currentPlaying) resetCurrentPlayingSong();
+    }
+  }, [playback_state, isLoggedIn, userUID]);
+
+  // Set up an interval to fetch and post every 2 seconds
+  useEffect(() => {
+    if (isLoggedIn && playback_state) {
+      const playbackInterval = setInterval(() => {
+        fetchCurrentPlayingSong(userUID);
+      }, 2 * 1000); // 2 seconds in milliseconds
+
+      setPlaybackIntervalId(playbackInterval);
+
+      return () => {
+        clearInterval(playbackInterval);
+      };
+    }
+  }, [isLoggedIn, userUID, playback_state, dispatch]);
+
+  // Remove active playbacks when playback_state changes to false
+  useEffect(() => {
+    if (isLoggedIn && !playback_state) {
+      dispatch(removeActivePlaybacksForUserThunk(userUID));
+    }
+  }, [playback_state, isLoggedIn, userUID, dispatch]);
+
+  // Interval to remove active playbacks
+  useEffect(() => {
+    if (isLoggedIn && !playback_state) {
+      const removeplaybackInterval = setInterval(() => {
+        dispatch(removeActivePlaybacksForUserThunk(userUID));
+      }, 2 * 1000); 
+
+      setRemovePlaybackIntervalId(removeplaybackInterval);
+
+      return () => {
+        clearInterval(removeplaybackInterval);
+      };
+    }
+  }, [isLoggedIn, userUID, playback_state, dispatch]);
 
   useEffect(() => {
     if (currentPlaying && isLoggedIn && playback_state) {
-      const user_id = user.uid;
+      const user_id = userUID;
       navigator.geolocation.getCurrentPosition(
         // Success callback
         (position) => {
@@ -121,13 +192,25 @@ function App() {
         }
       );
     }
-  }, [currentPlaying, isLoggedIn]);
+  }, [currentPlaying, isLoggedIn, playback_state, userUID, dispatch]);
 
   useEffect(() => {
     if (isLoggedIn) {
       dispatch(fetchUpdatedAtThunk(userUID));
     }
-  }, [isLoggedIn, userUID]);
+  }, [isLoggedIn, userUID, dispatch]);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      const updatedAtInterval = setInterval(() => {
+        dispatch(fetchUpdatedAtThunk(userUID));
+      }, 2 * 1000); 
+
+      return () => {
+        clearInterval(updatedAtInterval);
+      };
+    }
+  }, [isLoggedIn, userUID, playback_state, dispatch]);
 
   useEffect(() => {
     // Schedule the token refresh task every 50 minutes (3000000 milliseconds)
