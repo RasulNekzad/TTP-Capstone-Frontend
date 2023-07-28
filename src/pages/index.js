@@ -9,6 +9,7 @@ import spotify_2 from "../assets/spotify_2.png";
 import {useDispatch} from "react-redux";
 import {fetchPlaybackStateThunk} from "../redux/playbacks/playbacks.actions";
 import useDocumentTitle from "../components/useDocumentTitle";
+import AuthContext from "../context/AuthProviderContext";
 
 function Home() {
   const getParamsFromSpotifyAuth = (hash) => {

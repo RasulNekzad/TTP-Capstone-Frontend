@@ -42,9 +42,14 @@ function TopNavbar() {
             <Navbar.Toggle id="basic-navbar-toggle" aria-controls="basic-navbar-nav"/>
             <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="me-auto">
-                    <Link to="/songs" style={navCollapse ? {borderTop: '1px solid black'} : {}}
-                          className={`${navCollapse ? 'row-padding' : 'link-padding'} link-dec`}>Songs</Link>
-                    <Link to="/history" className={`${navCollapse ? 'row-padding' : ''} link-dec`}>History</Link>
+                    {isLoggedIn &&
+                        <>
+                            <Link to="/map" style={navCollapse ? {borderTop: '1px solid black'} : {}}
+                                  className={`${navCollapse ? 'row-padding' : 'link-padding'} link-dec`}>Map</Link>
+                            <Link to="/history"
+                                  className={`${navCollapse ? 'row-padding' : ''} link-dec`}>History</Link>
+                        </>
+                    }
                 </Nav>
                 {isLoggedIn ?
                     (<>

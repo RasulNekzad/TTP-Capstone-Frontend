@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, {useEffect, useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
 import {
-  fetchAllPlaybacksThunk,
-  fetchPersonalPlaybackThunk,
+    fetchAllPlaybacksThunk,
+    fetchPersonalPlaybackThunk,
 } from "../redux/playbacks/playbacks.actions";
 import Playbacks from "../components/playbacks";
 import ToggleButton from "../components/toggleButton/ToggleButton";
@@ -19,19 +19,20 @@ const PlaybacksHistory = () => {
   const userUID = useSelector((state) => state.auth.token);
   const [showPersonalPlaybacks, setShowPersonalPlaybacks] = useState(false);
 
-  const dispatch = useDispatch();
+    const dispatch = useDispatch();
 
-  const fetchAllPlaybacks = () => {
-    return dispatch(fetchAllPlaybacksThunk());
-  };
+    useDocumentTitle("History - Spotify Proximity");
 
   const fetchPersonalPlaybacks = () => {
     return dispatch(fetchPersonalPlaybackThunk(userUID));
   };
 
-  useEffect(() => {
-    fetchAllPlaybacks();
+    const fetchPersonalPlaybacks = (user_id) => {
+        return dispatch(fetchPersonalPlaybackThunk(user_id));
+    };
 
+    useEffect(() => {
+        fetchAllPlaybacks();
     // Check if the user is authenticated
     // Verification of registration by getAuth() or isLoggedIn state?
     const auth = getAuth();
@@ -43,10 +44,24 @@ const PlaybacksHistory = () => {
     }
   }, [isLoggedIn, userUID]);
 
-  // Function to toggle between global and personal playbacks
-  const togglePlaybackView = () => {
-    setShowPersonalPlaybacks(!showPersonalPlaybacks);
-  };
+        // Check if the user is authenticated
+        // Verification of registration by getAuth() or isLoggedIn state?
+        const auth = getAuth();
+        const user = auth.currentUser;
+        if (user) {
+            // If the user is logged in, fetch personal playbacks
+            const user_id = 1; // mock id for now
+            // Fetch user from db by user_id or email?
+            // Association between user in firebase and postgres?
+            // Or only use one of the two?
+            fetchPersonalPlaybacks(user_id);
+        }
+    }, []);
+
+    // Function to toggle between global and personal playbacks
+    const togglePlaybackView = () => {
+        setShowPersonalPlaybacks(!showPersonalPlaybacks);
+    };
 
   return (
     <div className="text-center">

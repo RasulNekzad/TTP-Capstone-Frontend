@@ -10,7 +10,6 @@ import {
 import {auth} from "../../firebaseConfig";
 import AuthCodeMap from "./AuthCodeMap";
 import {GoogleAuthProvider, signInWithPopup} from "firebase/auth";
-import {useNavigate} from "react-router-dom";
 import googleLogo from '../../assets/google.png'
 import {Alert} from "react-bootstrap";
 import AuthContext from "../../context/AuthProviderContext";
@@ -20,7 +19,6 @@ import useDocumentTitle from "../useDocumentTitle";
 
 const AuthForm = ({spotifyOAuth, onSpotifyAuthClick}) => {
     const provider = new GoogleAuthProvider();
-    const navigate = useNavigate();
     const {login} = useContext(AuthContext);
 
     const [authType, setAuthType] = useState(true);
@@ -53,7 +51,6 @@ const AuthForm = ({spotifyOAuth, onSpotifyAuthClick}) => {
                         email: emailInputRef.current.value
                     });
                 })
-                navigate('/');
             }).catch((error) => {
                 const errorCode = error.code;
                 setError(AuthCodeMap(errorCode));
@@ -65,7 +62,6 @@ const AuthForm = ({spotifyOAuth, onSpotifyAuthClick}) => {
                 }).then((userCredential) => {
                 const user = userCredential.user;
                 login(user.uid);
-                navigate('/');
             }).catch((error) => {
                 const errorCode = error.code;
                 setError(AuthCodeMap(errorCode));
@@ -89,7 +85,6 @@ const AuthForm = ({spotifyOAuth, onSpotifyAuthClick}) => {
                     display_name: user.displayName,
                     email: user.email
                 });
-                navigate('/');
             }).catch((error) => {
             // Handle Errors here.
             console.log(error); 
