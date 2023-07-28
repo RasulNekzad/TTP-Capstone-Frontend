@@ -1,7 +1,6 @@
 import axios from "axios";
 
 import UserActionType from "./user.types";
-import user from "../../components/userProfile";
 
 export const fetchUserProfile = (payload) => {
   console.log("FETCH USER PROFILE ACTION");
