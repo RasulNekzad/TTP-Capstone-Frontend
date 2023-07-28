@@ -6,7 +6,6 @@ import user from "../../components/userProfile";
 export const fetchUserProfile = (payload) => {
   console.log("FETCH USER PROFILE ACTION");
   return {
-    payload: payload,
     type: UserActionType.FETCHING_USER_PROFILE,
     payload,
   };
@@ -25,7 +24,7 @@ export const fetchUserProfileThunk = (userId) => {
     try {
       console.log("FETCHUSERPROFILETHUNK IS FIRING");
       const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/api/user/${userId}`
+        `${process.env.REACT_APP_API_URL}api/user/${userId}`
       );
       console.log("FETCHUSERPROFILETHUNK COMPLETED TO =>", response.data);
       dispatch(fetchUserProfile(response.data));
@@ -47,7 +46,7 @@ export const fetchUpdatedAtThunk = (userId) => {
     try {
       console.log("FETCHUPDATEDATTHUNK IS FIRING");
       const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/api/user/${userId}`
+        `${process.env.REACT_APP_API_URL}api/user/${userId}`
       );
       console.log("FETCHUPDATEATTHUNK COMPLETED", response.data.updatedAt);
       dispatch(fetchUpdatedAt(new Date(response.data.updatedAt)));
@@ -62,7 +61,7 @@ export const fetchSpotifyOAuthThunk = () => {
     try {
       console.log("FETCHSPOTIFYOAUTHTHUNK IS FIRING");
       const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/api/spotify/login`
+        `${process.env.REACT_APP_API_URL}api/spotify/login`
       );
       console.log("FETCHSPOTIFYOAUTHTHUNK COMPLETED");
       dispatch(fetchSpotifyOAuth(Date.now()));
@@ -85,7 +84,7 @@ export const refreshTokenThunk = (userId) => {
     try {
       console.log("REFRESHTOKEN IS FIRING");
       const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/api/spotify/refresh_token/${userId}`
+        `${process.env.REACT_APP_API_URL}api/spotify/refresh_token/${userId}`
       );
       console.log("REFRESHTOKEN COMPLETED =>", response.data);
       dispatch(refreshToken(response.data.updatedAt));
