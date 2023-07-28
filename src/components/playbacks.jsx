@@ -14,7 +14,7 @@ const Playbacks = ({ playbacks }) => {
   const [markers, setMarkers] = useState([]);
   const [selectedTrack, setSelectedTrack] = useState(null);
 
-  useDocumentTitle("Songs - Spotify Proximity");
+  useDocumentTitle("Map - Spotify Proximity");
 
   const success = (position) => {
     const { latitude, longitude } = position.coords;
@@ -104,7 +104,7 @@ const Playbacks = ({ playbacks }) => {
   };
 
   return (
-    <div style={{ height: "400px", width: "100%" }}>
+    <div style={{ height: "77.4vh", width: "100%" }}>
       <LoadScript googleMapsApiKey={apiKey}>
         <GoogleMap
           mapContainerStyle={{ height: "100%", width: "100%" }}

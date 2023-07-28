@@ -118,7 +118,7 @@ function App() {
                 <Route path="/login" element={<Auth />} />
                 <Route path="/user" element={<UserProfile />} />
                 <Route path="/user/:id" element={<User />} />
-                <Route path="/songs" element={<PlaybacksNearby />} />
+                <Route path="/map" element={<PlaybacksNearby />} />
                 <Route path="/history" element={<PlaybacksHistory />} />
             </Routes>
             <Footer />

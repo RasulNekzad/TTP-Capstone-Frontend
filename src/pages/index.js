@@ -1,6 +1,6 @@
 import "./index.css";
 import {Button} from "react-bootstrap";
-import React, {useEffect} from "react";
+import React, {useContext, useEffect} from "react";
 import img from "../assets/man_listening_headphones.png";
 import backgroundImg from "../assets/spotify_background.png";
 import mapLocation from "../assets/map_location.png";
@@ -9,6 +9,7 @@ import spotify_2 from "../assets/spotify_2.png";
 import {useDispatch} from "react-redux";
 import {fetchPlaybackStateThunk} from "../redux/playbacks/playbacks.actions";
 import useDocumentTitle from "../components/useDocumentTitle";
+import AuthContext from "../context/AuthProviderContext";
 
 function Home() {
     const getParamsFromSpotifyAuth = (hash) => {
@@ -23,6 +24,7 @@ function Home() {
         return params;
     };
     const dispatch = useDispatch();
+    const {isLoggedIn} = useContext(AuthContext);
 
     useDocumentTitle("Spotify Proximity");
 
@@ -55,11 +57,13 @@ function Home() {
                 <div className="header__col--1">
                     <div className="header__text">Spotify Proximity</div>
                     <h6>Ever wondered what music people around you are listening to?</h6>
+                    {!isLoggedIn &&
                     <div className="header__button">
-                        <Button href="/songs" variant="dark">
+                        <Button href="/login" variant="dark">
                             Get Started!
                         </Button>
                     </div>
+                    }
                 </div>
                 <div className="header__col--2">
                     <img
