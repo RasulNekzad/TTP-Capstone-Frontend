@@ -3,7 +3,7 @@ import SongsActionType from "./songs.types";
 export const INITIAL_SONGS_STATE = {
   songs: [],
   song: {},
-  currentPlaying: [],
+  currentPlaying: null,
 };
 
 const songsReducer = (state = INITIAL_SONGS_STATE, action) => {
@@ -20,6 +20,8 @@ const songsReducer = (state = INITIAL_SONGS_STATE, action) => {
     case SongsActionType.ADD_SONG:
       return { ...state, songs: [...state.songs, action.payload] };
 
+    case SongsActionType.RESET_CURRENT_PLAYING_SONG:
+      return { ...state, currentPlaying: null };
     default:
       return state;
   }

@@ -4,7 +4,7 @@ export const INITIAL_PLAYBACKS_STATE = {
   playbacks: [],
   playback: {},
   personalPlaybacks: [],
-  playback_state: {},
+  playback_state: false,
   activePlaybacks: [],
 };
 
@@ -27,7 +27,7 @@ const playbacksReducer = (state = INITIAL_PLAYBACKS_STATE, action) => {
       return { ...state, personalPlaybacks: action.payload };
 
     case PlaybacksActionType.FETCH_PLAYBACK_STATE:
-      return { ...state, playback_state: action.payload };
+      return { ...state, playback_state: action.payload.is_playing };
 
     case PlaybacksActionType.FETCH_ACTIVE_PLAYBACKS:
       return { ...state, activePlaybacks: action.payload };
