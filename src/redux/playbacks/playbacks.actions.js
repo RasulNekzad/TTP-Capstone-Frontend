@@ -1,7 +1,5 @@
 import axios from "axios";
 import PlaybacksActionType from "./playbacks.types";
-import { async } from "q";
-import user from "../../components/userProfile";
 
 export const fetchAllPlaybacks = (payload) => ({
   type: PlaybacksActionType.FETCH_ALL_PLAYBACKS,
