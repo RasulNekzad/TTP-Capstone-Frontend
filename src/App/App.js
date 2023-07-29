@@ -16,9 +16,8 @@ import User from "../pages/user";
 import UserProfile from "../components/user/UserProfile";
 import PlaybacksNearby from "../pages/playbacksNearby";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import PlaybacksHistory from "../pages/playbacksHistory";
-import { getAuth } from "firebase/auth";
 import {
   fetchUpdatedAtThunk,
   refreshTokenThunk,
@@ -32,15 +31,7 @@ function App() {
   const userUID = useSelector((state) => state.auth.token);
   const playback_state = useSelector((state) => state.playbacks.playback_state);
   const dispatch = useDispatch();
-  const auth = getAuth();
-  const user = auth.currentUser;
-  const thirtySecondsMs = 30000;
   const updatedAt = useSelector((state) => state.user.updatedAt);
-  const [intervalId, setIntervalId] = useState(null);
-  const [playbackIntervalId, setPlaybackIntervalId] = useState(null);
-  const [removeplaybackIntervalId, setRemovePlaybackIntervalId] =
-    useState(null);
-  const [playbackStateIntervalId, setPlaybackStateIntervalId] = useState(null);
 
   console.log("Logged In: ", isLoggedIn);
   console.log("Current Playing: ", currentPlaying);
@@ -49,13 +40,7 @@ function App() {
     dispatch(fetchCurrentPlayingSongThunk(userUID));
   };
 
-  // const handleUserLeave = () => {
-  //   if (user && isLoggedIn) {
-  //     dispatch(removeActivePlaybacksForUserThunk(user.uid));
-  //   }
-  // };
-
-  const fetchPlaybackState = (userUID) => {
+  const fetchPlaybackstate = (userUID) => {
     dispatch(fetchPlaybackStateThunk(userUID));
   };
 
@@ -63,61 +48,54 @@ function App() {
     dispatch(resetCurrentPlayingSongThunk());
   };
 
-  // useEffect(() => {
-  //   // Execute the fetch and post function immediately when the component mounts
-  //   if (isLoggedIn) {
-  //     // Fetch whether user is playing song after logged in
-  //     fetchPlaybackState(userUID);
-  //     // Fetch current playing song if user is playing song
-  //     // Else reset currentPlaying and remove active playbacks
-  //     if (playback_state) {
-  //       fetchCurrentPlayingSong(userUID);
-  //     } else {
-  //         if (currentPlaying) {
-  //           resetCurrentPlayingSong();
-  //           dispatch(removeActivePlaybacksForUserThunk(userUID));
-  //         }
-  //     }
-  //   }
+  const fetchCurrentAndResetPlayingSongIfNeeded = async () => {
+    if (isLoggedIn && playback_state) {
+      fetchCurrentPlayingSong(userUID);
+    } else {
+      if (currentPlaying) resetCurrentPlayingSong();
+    }
+  };
 
-  //   // Set up an interval to fetch and post every 5 minutes
-  //   const interval = setInterval(() => {
-  //     if (isLoggedIn) {
-  //       fetchPlaybackState(userUID);
-  //       if (playback_state) {
-  //         fetchCurrentPlayingSong(userUID);
-  //       } else {
-  //         if (currentPlaying) {
-  //           resetCurrentPlayingSong();
-  //           dispatch(removeActivePlaybacksForUserThunk(userUID));
-  //         }
-  //       }
-  //     }
-  //   }, 2 * 1000); // 5 seconds in milliseconds
+  const removeActivePlaybacks = async () => {
+    if (isLoggedIn && !playback_state) {
+      dispatch(removeActivePlaybacksForUserThunk(userUID));
+    }
+  };
 
-  //   // Save the interval ID for cleanup
-  //   setIntervalId(interval);
+  const fetchPlaybackState = async () => {
+    if (isLoggedIn) {
+      fetchPlaybackstate(userUID);
+    }
+  };
 
-  //   // Clean up the interval when the component unmounts
-  //   return () => {
-  //     clearInterval(intervalId);
-  //   };
-  // }, [isLoggedIn, userUID, playback_state]);
+  const fetchUpdatedAtAndCheckTokenRefresh = async () => {
+    if (isLoggedIn) {
+      dispatch(fetchUpdatedAtThunk(userUID));
+      checkTokenRefresh();
+    }
+  };
+
+  // Function to check if the token needs to be refreshed
+  const checkTokenRefresh = async () => {
+    const now = Date.now();
+    const expiresIn = 3600 * 1000; // 3600 seconds = 1 hour
+    const timeDiff = now - updatedAt;
+
+    if (timeDiff >= expiresIn && isLoggedIn) {
+      refreshTokenThunk(userUID);
+      console.log("Token refreshed for the user.");
+    }
+  };
+
   // Fetch playback state when the component mounts and when playback_state changes
   useEffect(() => {
-    if (isLoggedIn) {
-      fetchPlaybackState(userUID);
-    }
+    fetchPlaybackState();
   }, [isLoggedIn, userUID]);
 
   // Set up an interval to fetch the playback state every 2 seconds
   useEffect(() => {
     if (isLoggedIn) {
-      const playbackStateInterval = setInterval(() => {
-        fetchPlaybackState(userUID);
-      }, 2 * 1000); // 2 seconds in milliseconds
-
-      setPlaybackStateIntervalId(playbackStateInterval);
+      const playbackStateInterval = setInterval(fetchPlaybackState(), 2 * 1000); // 2 seconds in milliseconds
 
       return () => {
         clearInterval(playbackStateInterval);
@@ -127,49 +105,41 @@ function App() {
 
   // Fetch current playing song when playback_state changes or when the component mounts
   useEffect(() => {
-    if (isLoggedIn && playback_state) {
-      fetchCurrentPlayingSong(userUID);
-    } else {
-      if (currentPlaying) resetCurrentPlayingSong();
-    }
+    fetchCurrentAndResetPlayingSongIfNeeded();
   }, [playback_state, isLoggedIn, userUID]);
 
   // Set up an interval to fetch and post every 2 seconds
   useEffect(() => {
     if (isLoggedIn && playback_state) {
-      const playbackInterval = setInterval(() => {
-        fetchCurrentPlayingSong(userUID);
-      }, 2 * 1000); // 2 seconds in milliseconds
-
-      setPlaybackIntervalId(playbackInterval);
+      const playbackInterval = setInterval(
+        fetchCurrentAndResetPlayingSongIfNeeded(),
+        2 * 1000
+      ); // 2 seconds in milliseconds
 
       return () => {
         clearInterval(playbackInterval);
       };
     }
-  }, [isLoggedIn, userUID, playback_state, dispatch]);
+  }, [isLoggedIn, userUID]);
 
   // Remove active playbacks when playback_state changes to false
   useEffect(() => {
-    if (isLoggedIn && !playback_state) {
-      dispatch(removeActivePlaybacksForUserThunk(userUID));
-    }
-  }, [playback_state, isLoggedIn, userUID, dispatch]);
+    removeActivePlaybacks();
+  }, [playback_state, isLoggedIn, userUID]);
 
   // Interval to remove active playbacks
   useEffect(() => {
     if (isLoggedIn && !playback_state) {
-      const removeplaybackInterval = setInterval(() => {
-        dispatch(removeActivePlaybacksForUserThunk(userUID));
-      }, 2 * 1000);
-
-      setRemovePlaybackIntervalId(removeplaybackInterval);
+      const removeplaybackInterval = setInterval(
+        removeActivePlaybacks(),
+        2 * 1000
+      );
 
       return () => {
         clearInterval(removeplaybackInterval);
       };
     }
-  }, [isLoggedIn, userUID, playback_state, dispatch]);
+  }, [isLoggedIn, userUID]);
 
   useEffect(() => {
     if (currentPlaying && isLoggedIn && playback_state) {
@@ -196,42 +166,21 @@ function App() {
   }, [currentPlaying, isLoggedIn, playback_state, userUID, dispatch]);
 
   useEffect(() => {
-    if (isLoggedIn) {
-      dispatch(fetchUpdatedAtThunk(userUID));
-    }
+    fetchUpdatedAtAndCheckTokenRefresh();
   }, [isLoggedIn, userUID, dispatch]);
 
   useEffect(() => {
     if (isLoggedIn) {
-      const updatedAtInterval = setInterval(() => {
-        dispatch(fetchUpdatedAtThunk(userUID));
-      }, 2 * 1000);
+      const updatedAtInterval = setInterval(
+        fetchUpdatedAtAndCheckTokenRefresh(),
+        10 * 1000
+      );
 
       return () => {
         clearInterval(updatedAtInterval);
       };
     }
-  }, [isLoggedIn, userUID, playback_state, dispatch]);
-  
-  useEffect(() => {
-    // Schedule the token refresh task every 50 minutes (3000000 milliseconds)
-    const refreshTokenTask = setInterval(checkTokenRefresh, 3000000);
-    
-    // Clean up the interval when the component unmounts
-    return () => clearInterval(refreshTokenTask);
-  }, [isLoggedIn, userUID]);
-
-  // Function to check if the token needs to be refreshed
-  const checkTokenRefresh = async () => {
-      const now = Date.now();
-      const expiresIn = 3600 * 1000; // 3600 seconds = 1 hour
-      const timeDiff = now - updatedAt;
-
-      if (timeDiff >= expiresIn && user) {
-          refreshTokenThunk(userUID);
-          console.log("Token refreshed for the user.");
-      }
-  };
+  }, [isLoggedIn, userUID, dispatch]);
 
   return (
     <Router>

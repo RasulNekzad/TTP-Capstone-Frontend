@@ -50,7 +50,7 @@ export const resetCurrentPlayingSongThunk = () => {
   return async (dispatch) => {
     try {
       console.log("RESET CURRENTLY PLAYING SONG");
-      dispatch(resetCurrentPlayingSong());
+      await dispatch(resetCurrentPlayingSong());
     } catch (error) {
       console.error(error);
     }
