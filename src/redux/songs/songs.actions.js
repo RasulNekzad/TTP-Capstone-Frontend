@@ -1,6 +1,5 @@
 import axios from "axios";
 import SongsActionType from "./songs.types";
-import { async } from "q";
 
 export const fetchAllSongs = (payload) => ({
   type: SongsActionType.FETCH_ALL_SONGS,

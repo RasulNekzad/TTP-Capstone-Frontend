@@ -6,6 +6,7 @@ import {
   createPlaybackThunk,
   fetchPlaybackStateThunk,
   removeActivePlaybacksForUserThunk,
+  fetchActivePlaybacksThunk,
 } from "../redux/playbacks/playbacks.actions";
 import { useDispatch, useSelector } from "react-redux";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -48,11 +49,19 @@ function App() {
     dispatch(resetCurrentPlayingSongThunk());
   };
 
+  const fetchActivePlaybacks = () => {
+    return dispatch(fetchActivePlaybacksThunk());
+  };
+
   const fetchCurrentAndResetPlayingSongIfNeeded = async () => {
     if (isLoggedIn && playback_state) {
       fetchCurrentPlayingSong(userUID);
+      fetchActivePlaybacks();
     } else {
-      if (currentPlaying) resetCurrentPlayingSong();
+      if (currentPlaying) {
+        resetCurrentPlayingSong();
+        if (!currentPlaying) removeActivePlaybacks();
+      }
     }
   };
 
@@ -78,11 +87,11 @@ function App() {
   // Function to check if the token needs to be refreshed
   const checkTokenRefresh = async () => {
     const now = Date.now();
-    const expiresIn = 3600 * 1000; // 3600 seconds = 1 hour
+    const expiresIn = 3500 * 1000;
     const timeDiff = now - updatedAt;
 
     if (timeDiff >= expiresIn && isLoggedIn) {
-      refreshTokenThunk(userUID);
+      dispatch(refreshTokenThunk(userUID));
       console.log("Token refreshed for the user.");
     }
   };
@@ -95,7 +104,7 @@ function App() {
   // Set up an interval to fetch the playback state every 2 seconds
   useEffect(() => {
     if (isLoggedIn) {
-      const playbackStateInterval = setInterval(fetchPlaybackState(), 2 * 1000); // 2 seconds in milliseconds
+      const playbackStateInterval = setInterval(fetchPlaybackState, 2 * 1000); // 2 seconds in milliseconds
 
       return () => {
         clearInterval(playbackStateInterval);
@@ -112,7 +121,7 @@ function App() {
   useEffect(() => {
     if (isLoggedIn && playback_state) {
       const playbackInterval = setInterval(
-        fetchCurrentAndResetPlayingSongIfNeeded(),
+        fetchCurrentAndResetPlayingSongIfNeeded,
         2 * 1000
       ); // 2 seconds in milliseconds
 
@@ -120,26 +129,47 @@ function App() {
         clearInterval(playbackInterval);
       };
     }
-  }, [isLoggedIn, userUID]);
+  }, [isLoggedIn, userUID, playback_state]);
 
   // Remove active playbacks when playback_state changes to false
   useEffect(() => {
-    removeActivePlaybacks();
-  }, [playback_state, isLoggedIn, userUID]);
+    if (!currentPlaying){
+      removeActivePlaybacks();
+      fetchActivePlaybacks();
+    } 
+  }, [playback_state, currentPlaying]);
 
-  // Interval to remove active playbacks
+  // Set up interval for removing active playbacks
   useEffect(() => {
     if (isLoggedIn && !playback_state) {
-      const removeplaybackInterval = setInterval(
-        removeActivePlaybacks(),
-        2 * 1000
-      );
+      const removeplaybacksinterval = setInterval(() => {
+        if (!currentPlaying) {
+          removeActivePlaybacks();
+          fetchActivePlaybacks();
+        } 
+      }, 1000);
 
       return () => {
-        clearInterval(removeplaybackInterval);
+        clearInterval(removeplaybacksinterval);
       };
     }
-  }, [isLoggedIn, userUID]);
+  }, [currentPlaying]);
+
+  // Fetch current playing song after switch song and remove active playbacks when current song is null
+  useEffect(() => {
+    if (isLoggedIn) {
+      const currentPlayingInterval = setInterval(() => {
+        if (isLoggedIn && currentPlaying) {
+          fetchCurrentPlayingSong(userUID);
+          fetchActivePlaybacks();
+        }
+      }, 2 * 1000);
+
+      return () => {
+        clearInterval(currentPlayingInterval);
+      };
+    }
+  }, [isLoggedIn, currentPlaying]);
 
   useEffect(() => {
     if (currentPlaying && isLoggedIn && playback_state) {
@@ -165,15 +195,15 @@ function App() {
     }
   }, [currentPlaying, isLoggedIn, playback_state, userUID, dispatch]);
 
-  useEffect(() => {
-    fetchUpdatedAtAndCheckTokenRefresh();
-  }, [isLoggedIn, userUID, dispatch]);
+  // useEffect(() => {
+  //   fetchUpdatedAtAndCheckTokenRefresh();
+  // }, [isLoggedIn, userUID, dispatch]);
 
   useEffect(() => {
     if (isLoggedIn) {
       const updatedAtInterval = setInterval(
-        fetchUpdatedAtAndCheckTokenRefresh(),
-        10 * 1000
+        fetchUpdatedAtAndCheckTokenRefresh,
+        3500 * 1000
       );
 
       return () => {
